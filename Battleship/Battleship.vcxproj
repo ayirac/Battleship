@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{6e79acc4-7447-4e06-bc4c-9d829267b397}</ProjectGuid>
-    <RootNamespace>SFML_Messing_Around</RootNamespace>
+    <RootNamespace>Battleship</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Battleship</ProjectName>
   </PropertyGroup>
