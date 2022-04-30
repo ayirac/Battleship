@@ -54,6 +54,8 @@ public:
 	sf::Vector2i& get_first_open_cell();
 	//
 	void draw_grid_marks(sf::RenderWindow& win);
+	//
+	void reset_map();
 };
 
 

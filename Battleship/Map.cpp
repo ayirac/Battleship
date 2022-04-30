@@ -298,7 +298,6 @@ std::string Map::check_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos)
 std::string Map::check_hit(sf::Vector2i& pos)
 {
 	std::string ship_types[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer" };
-	// If there isn't already a peg on the Cell then add one
 	if (!this->cells_[pos.x][pos.y].has_peg())
 	{
 		for (unsigned e = 0; e < 5; e++)
@@ -306,13 +305,11 @@ std::string Map::check_hit(sf::Vector2i& pos)
 			if (this->cells_[pos.x][pos.y].get_type() == ship_types[e])
 			{
 				this->cells_[pos.x][pos.y].add_peg(this->pegs_[1]);
-				// Iterates through the ships_ to locate the ship to remove HP from
+				// Iterates through the ships_ to locate the ship to remove HP & add a peg to
 				for (unsigned q = 0; q < this->ships_.size(); q++)
 				{
 					if (this->ships_[q]->get_type() == ship_types[e])
-					{
 						this->ships_[q]->remove_hp();
-					}
 				}
 				return ship_types[e];
 			}
@@ -361,6 +358,23 @@ void Map::draw_grid_marks(sf::RenderWindow& win)
 {
 	this->horizontal_marks_.draw(win);
 	this->vertical_marks_.draw(win);
+}
+
+void Map::reset_map()
+{
+	for (int i = 0; i < this->cells_.size(); i++)
+	{
+		for (int j = 0; j < this->cells_.size(); j++)
+		{
+			if (this->cells_[i][j].has_peg())
+			{
+				this->cells_[i][j].remove_peg();
+				this->cells_[i][j].remove_texture();
+			}
+			else if (this->cells_[i][j].get_type() != "Empty")
+				this->cells_[i][j].remove_texture();
+		}
+	}
 }
 
 std::ostream& operator<<(std::ostream& output, Map& map)

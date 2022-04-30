@@ -28,7 +28,6 @@ void Button::update(const sf::Vector2i& mouse_pos, sf::RenderWindow& window)
 	}
 	else if (this->state_ != 0)
 	{
-		this->state_ = 0;
 		this->reset();
 	}
 }
@@ -50,7 +49,7 @@ void Button::reset()
 	this->text_.setCharacterSize(this->original_char_size_);
 	this->text_.setFillColor(this->colors_[0]);
 	this->text_.setPosition(sf::Vector2f(this->original_pos_.x - this->text_.getLocalBounds().width / 2, original_pos_.y - this->text_.getLocalBounds().height / 2));
-		
+	this->state_ = 0;
 }
 
 

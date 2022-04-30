@@ -33,6 +33,8 @@ public:
 	bool holding_button();
 	void shift_down();
 	void shift_up();
+	// Clears the table entries
+	void reset_table();
 };
 
 #endif

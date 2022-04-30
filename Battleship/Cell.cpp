@@ -1,7 +1,7 @@
 #include "Cell.h"
 
 Cell::Cell(unsigned size, sf::Texture* empty_tex) : size_(size), box_(sf::Vector2f(static_cast<float>(this->size_), static_cast<float>(this->size_))), type_("Empty"),
-	visible_(false), peg_(nullptr), texture_(empty_tex)
+	visible_(false), peg_(nullptr), texture_(nullptr), empty_texture_(empty_tex)
 {
 	this->box_.setOrigin(this->size_/2, this->size_/2);
 	this->box_.setOutlineColor(sf::Color::Red);
@@ -28,6 +28,14 @@ void Cell::set_texture(sf::Texture* t, std::string type, bool change)
 		this->box_.setTexture(this->texture_, true);
 		this->visible_ = true;
 	}
+}
+
+void Cell::remove_texture()
+{
+	this->type_ = "Empty";
+	this->texture_ = nullptr;
+	this->box_.setTexture(this->empty_texture_, true);
+	this->visible() = false;
 }
 
 void Cell::draw(sf::Vector2f& loc, sf::RenderWindow& win)
@@ -70,11 +78,16 @@ void Cell::add_peg(ImageBox* peg)
 	this->peg_ = peg;
 }
 
+void Cell::remove_peg()
+{
+	this->peg_ = nullptr;
+}
+
 bool Cell::has_peg()
 {
-	if (this->peg_ != nullptr)
-		return true;
-	return false;
+	if (this->peg_ == nullptr)
+		return false;
+	return true;
 }
 
 sf::RectangleShape& Cell::get_shape()

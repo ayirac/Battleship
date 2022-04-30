@@ -46,7 +46,6 @@ void ButtonTexture::update(const sf::Vector2i& mouse_pos, sf::RenderWindow& wind
 	}
 	else if (this->state_ != 0)
 	{
-		this->state_ = 0;
 		this->reset();
 	}
 }
@@ -81,11 +80,11 @@ void ButtonTexture::draw(sf::RenderWindow& win) const
 
 void ButtonTexture::reset()
 {
+	this->state_ = 0;
 	this->shape_.setSize(this->original_size_);
 	this->text_.setCharacterSize(this->original_char_size_);
 	this->text_.setFillColor(this->colors_[0]);
 	this->shape_.setTexture(this->textures_.at(0));
 	this->text_.setPosition(sf::Vector2f((this->shape_.getPosition().x + this->shape_.getSize().x / 2) - (this->text_.getLocalBounds().width / 2), 
 		(this->shape_.getPosition().y + this->shape_.getSize().y / 2) - (this->text_.getLocalBounds().height / 2)));
-	
 }

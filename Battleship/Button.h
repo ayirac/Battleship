@@ -24,7 +24,7 @@ public:
 	// Changes the texture of the button to the pressed texture when state_ is 2
 	void press();
 	// Resets the size and texture of the button to their original states when called
-	void reset();
+	virtual void reset();
 	// Returns true if the button contains the mouse_pos
 	bool contains(const sf::Vector2f& mouse_pos) const;
 	// Sets the state_ of the button according to the parameter

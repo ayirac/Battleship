@@ -9,6 +9,7 @@ private:
 	unsigned const size_;
 	sf::RectangleShape box_;
 	sf::Texture* texture_;
+	sf::Texture* empty_texture_;
 	std::string type_;
 	ImageBox* peg_;
 	bool visible_;
@@ -19,6 +20,7 @@ public:
 	void set_texture(std::string type);
 	// Sets the texture of the cell and its type
 	void set_texture(sf::Texture* t, std::string type, bool change);
+	void remove_texture();
 	// Get the pointer to the texture of the cell
 	sf::Texture* get_texture();
 	// Draws the cell at the first parameter's location in the specified RenderWindow
@@ -33,6 +35,8 @@ public:
 	bool contains(const sf::Vector2f& pos);
 	// Adds a peg to the cell
 	void add_peg(ImageBox* peg); // false for white, true for read
+	// Removes a peg from a cell
+	void remove_peg();
 	//
 	bool has_peg();
 	//

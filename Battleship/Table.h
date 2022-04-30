@@ -32,8 +32,6 @@ protected:
 	unsigned row_spacing_;
 	//unsigned current_row_;
 	std::vector<sf::Texture*> textures_;
-	float next_text_x_;
-	float next_text_y_;
 public:
 	Table();
 	// Creates a table with three columns for keeping statistics on the game
@@ -44,6 +42,8 @@ public:
 	void draw(sf::RenderWindow& win);
 	// add entry to the HMT table
 	void add_entry(HMT_stats& player_stats, HMT_stats& enemy_stats);
+	// Clears the table of all entries
+	void reset_table();
 };
 
 #endif

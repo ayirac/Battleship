@@ -69,6 +69,7 @@ public:
 	void release_figurine(const sf::Vector2f& mouse_pos);
 	// Releases the current figurine
 	void release_figurine();
+	void reset_game();
 	// Executed when a button that is pressed by a mouse is released. Controls a variety of actions
 	// based on the button that is pressed as indicated by mouse position.
 	void release_button();
@@ -92,5 +93,11 @@ public:
 	void ai_sink_ship(sf::Vector2i& attack_pos, bool& hit);
 	// Returns a reference to the statistics table
 	TableScrollable& get_statistics();
+	// Returns a reference to the HMT table
+	Table& get_hmt();
+	// Reset the HMT stat objects to a default state
+	void reset_hmt_stats();
+	// Disables all buttons that don't belong to the current state of the game
+	void disable_buttons();
 };
 #endif

@@ -235,3 +235,15 @@ void TableScrollable::shift_up()
 	this->front_row_--;
 	this->bottom_row_--;
 }
+
+void TableScrollable::reset_table()
+{
+	this->player_hits_.clear();
+	this->enemy_hits_.clear();
+	for (int i = 0; i < this->texts_.size(); i++)
+		this->texts_[i].clear();
+	this->current_round_ = 1;
+	this->current_row_ = 1;
+	this->front_row_ = -1;
+	this->bottom_row_ = -1;
+}

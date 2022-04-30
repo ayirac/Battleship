@@ -16,7 +16,6 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	pegs.push_back(p_peg);
 
 	// Make font
-	std::string singleplayer_text = "Singleplayer";
 	sf::Font itc_kabel;
 	if (!itc_kabel.loadFromFile(".\\Resources\\Fonts\\ITCKabelStd-Bold.otf"))
 		std::cout << "Failed to load ITC_Kabel font\n";
@@ -106,7 +105,8 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 void Game::release_button()
 {
 	const std::string btn_text = this->held_button_->get_text();
-	if (btn_text == "Singleplayer")						// Main menu buttons
+	std::cout << btn_text << std::endl;
+	if (btn_text == "Singleplayer")							// Main menu buttons
 	{
 		this->state_ = 1;
 	}
@@ -118,24 +118,19 @@ void Game::release_button()
 	{
 		//this->state_ = 1;
 	}
-	else if (btn_text == "Randomize")					// Ship menu buttons
+	else if (btn_text == "Randomize")						// Ship menu buttons
 	{
 		this->get_player_map().remove_ships();
 		this->randomize_ships(true);
 
 		size_t const vec_size = this->figurines_.size();
 		for (int i = 0; i < vec_size; i++)
-		{
 			this->remove_figurine(this->figurines_[0].get_type());
-		}
-
-
 	}
 	else if (btn_text == "Exit to Menu")
 	{
 		std::cout << "Exiting to Menu.\n";
-		this->get_player_map().remove_ships();
-		this->add_discarded_figurines();
+		this->reset_game();
 		this->state_ = 0;
 	}
 	else if (btn_text == "Reset Ships")
@@ -145,13 +140,6 @@ void Game::release_button()
 	}
 	else if (btn_text == "Start Game")
 	{
-		// make previous buttons invisible
-		this->tex_buttons_.at(0).set_state(3);
-		this->tex_buttons_.at(1).set_state(3);
-		this->tex_buttons_.at(2).set_state(3);
-		this->tex_buttons_.at(3).set_state(3);
-		this->tex_buttons_.at(4).set_state(3);
-
 		// start game & randomize enemy ships if all players ships are added
 		if (this->figurines_.empty())
 		{
@@ -161,13 +149,12 @@ void Game::release_button()
 		else {
 			// add error msg, maybe popup box with custom class
 		}
-
 	}
-	else if (btn_text == "Attack")					// Singleplayer battle buttons
+	else if (btn_text == "Attack")							// Singleplayer battle buttons
 	{
 		this->ready_attack();
 	}
-	else if (btn_text == "Surrender")					// Singleplayer battle buttons
+	else if (btn_text == "Surrender")					
 	{
 		this->state_ = 3;
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
@@ -176,10 +163,8 @@ void Game::release_button()
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
-
 	this->held_button_->reset();
-	if (this->held_button_->get_state() != 3)
-		this->held_button_->set_state(0);
+	this->disable_buttons();
 	this->held_button_ = nullptr;
 }
 
@@ -321,16 +306,7 @@ void Game::game_start()
 	}
 
 	// Check victory status
-	if (this->get_player_map().get_ships().empty())
-	{
-		this->state_ = 3;
-		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
-		this->victory_text_.setString("Defeat");
-		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
-		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
-		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
-	}
-	else if (this->get_enemy_map().get_ships().empty())
+	if (this->get_enemy_map().get_ships().empty())
 	{
 		this->state_ = 3;
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
@@ -339,6 +315,15 @@ void Game::game_start()
 		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
 		this->victory_text_.setFillColor(sf::Color(255, 157, 25));
 		this->victory_text_.setOutlineColor(sf::Color::Black);
+	}
+	else if (this->get_player_map().get_ships().empty())
+	{
+		this->state_ = 3;
+		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
+		this->victory_text_.setString("Defeat");
+		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
+		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
+		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
 		
 }
@@ -495,7 +480,7 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 	// check if a button was clocked on
 	for (int i = 0; i < this->buttons_.size(); i++)
 	{
-		if (this->buttons_[i].contains(mouse_pos))
+		if (this->buttons_[i].contains(mouse_pos) && this->buttons_[i].get_state() != 3)
 		{
 			this->buttons_[i].set_state(2);
 			this->held_button_ = &this->buttons_[i];
@@ -506,7 +491,7 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 	// check if a tex_button was clocked on
 	for (int i = 0; i < this->tex_buttons_.size(); i++)
 	{
-		if (this->tex_buttons_[i].contains(mouse_pos) && this->tex_buttons_[i].get_state() != 3)
+		if (this->tex_buttons_[i].contains(mouse_pos) && this->tex_buttons_[i].get_state() != 3) // excludes buttons in state 3 (disabled)
 		{
 			this->tex_buttons_[i].set_state(2);
 			this->held_button_ = &this->tex_buttons_[i];
@@ -528,6 +513,18 @@ void Game::release_figurine(const sf::Vector2f& mouse_pos)
 void Game::release_figurine()
 {
 	this->held_figurine_ = nullptr;
+}
+
+void Game::reset_game()
+{
+	this->get_player_map().remove_ships();
+	this->get_enemy_map().remove_ships();
+	this->add_discarded_figurines();
+	this->get_statistics().reset_table();
+	this->get_hmt().reset_table();
+	this->get_player_map().reset_map();
+	this->get_enemy_map().reset_map();
+	this->reset_hmt_stats();
 }
 
 
@@ -574,7 +571,7 @@ void Game::ready_attack()
 
 bool Game::process_hit(sf::Vector2f& mouse_pos, bool player, sf::Vector2i& attack_pos, bool& hit)
 {
-	std::string target_hit;
+ 	std::string target_hit;
 	if (player)
 		target_hit = this->get_player_map().check_hit(mouse_pos, attack_pos);
 	else // not used, maybe with IP multiplayer
@@ -781,9 +778,8 @@ void Game::ai_sink_ship(sf::Vector2i& attack_pos, bool& hit) // works (?)
 			}
 		}
 	}
-	while (!valid_cell || struck_cell == "Filled");
+ while (!valid_cell || struck_cell == "Filled");
 
-	// Set orientation if it hasn't been found yet, reset sides_checked_
 	if (struck_cell != "Empty")
 	{
 		this->ai_hits.push_back(pos_temp);
@@ -794,7 +790,7 @@ void Game::ai_sink_ship(sf::Vector2i& attack_pos, bool& hit) // works (?)
 		// sets the orientation if a second cell is hit that is the same axis as the previous
 		if (this->ai_ship_found_orientation == 0)
 		{
-			if (this->ai_ship_found_orientation = next_cell == 0 || next_cell == 1) // horizontal
+			if (next_cell == 0 || next_cell == 1) // horizontal
 				this->ai_ship_found_orientation = 1;
 			else if (next_cell == 2 || next_cell == 3) // vertical
 				this->ai_ship_found_orientation = 2;
@@ -816,4 +812,56 @@ void Game::ai_sink_ship(sf::Vector2i& attack_pos, bool& hit) // works (?)
 TableScrollable& Game::get_statistics()
 {
 	return this->statistics_;
+}
+
+Table& Game::get_hmt()
+{
+	return this->HMT_stats_;
+}
+
+void Game::reset_hmt_stats()
+{
+	this->player_stats_.hits = 0;
+	this->player_stats_.misses = 0;
+	this->player_stats_.total = 0;
+	this->player_stats_.hit_rate = 0.0;
+	this->enemy_stats_.hits = 0;
+	this->enemy_stats_.misses = 0;
+	this->enemy_stats_.total = 0;
+	this->enemy_stats_.hit_rate = 0.0;
+}
+
+void Game::disable_buttons()
+{
+	if (this->state_ == 0)
+	{
+		for (int i = 0; i < this->tex_buttons_.size(); i++)				// Disable game buttons excluding menu
+			this->tex_buttons_[i].set_state(3);
+	}
+	else if (this->state_ == 1)
+	{
+		for (int i = 0; i < 3; i++) {									// Disable menu buttons
+			this->buttons_[i].set_state(3);
+		}
+		for (int i = 0; i < 4; i++)										// Enable ship select menu buttons 4
+			this->tex_buttons_[i].set_state(0);
+	}
+	else if (this->state_ == 2)
+	{
+		for (int i = 0; i < 3; i++)										// Disable menu buttons
+			this->buttons_[i].set_state(3);
+		for (int i = 0; i < 4; i++)										// Disable ship select menu buttons 4
+			this->tex_buttons_[i].set_state(3);
+		for (int i = 4; i < 6; i++)										// Enable SP buttons 2
+			this->tex_buttons_[i].set_state(0);
+	}
+	else if (this->state_ == 3)
+	{
+		for (int i = 4; i < 6; i++)										// disable SP buttons 2
+			this->tex_buttons_[i].set_state(3);
+		this->tex_buttons_[4].set_state(0);								// Enable post-game buttons 1
+			
+	}
+	for (int i = 0; i < this->buttons_.size(); i++)
+		this->buttons_[i].set_state(3);
 }
