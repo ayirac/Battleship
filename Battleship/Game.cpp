@@ -177,7 +177,7 @@ void Game::release_button()
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
 
-	this->held_button_->release();
+	this->held_button_->reset();
 	if (this->held_button_->get_state() != 3)
 		this->held_button_->set_state(0);
 	this->held_button_ = nullptr;
@@ -613,7 +613,7 @@ void Game::process_ai_hit(sf::Vector2i& attack_pos, bool& hit)
 		random_ai_attack(attack_pos, hit);
 }
 
-void Game::random_ai_attack(sf::Vector2i& attack_pos, bool& hit) // just cont here ya
+void Game::random_ai_attack(sf::Vector2i& attack_pos, bool& hit)
 {
 	std::string struck_cell;
 	sf::Vector2i rand_pos;
@@ -790,15 +790,16 @@ void Game::ai_sink_ship(sf::Vector2i& attack_pos, bool& hit) // works (?)
 		this->ai_last_hit_ = pos_temp;
 		this->ai_ship_found_ = true;
 		this->side_checked_[0] = false; this->side_checked_[1] = false; this->side_checked_[2] = false; this->side_checked_[3] = false;
-		/*
+
+		// sets the orientation if a second cell is hit that is the same axis as the previous
 		if (this->ai_ship_found_orientation == 0)
 		{
-			if (this->ai_ship_found_orientation = 1ext_cell == 0 || next_cell == 1) // horizontal
+			if (this->ai_ship_found_orientation = next_cell == 0 || next_cell == 1) // horizontal
+				this->ai_ship_found_orientation = 1;
 			else if (next_cell == 2 || next_cell == 3) // vertical
 				this->ai_ship_found_orientation = 2;
 		}
 		this->ai_reset_first_hit_ = false;
-		*/ // no clue what this is
 
 		hit = true;
 		this->enemy_stats_.hits++;

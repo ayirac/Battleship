@@ -13,7 +13,7 @@ protected:
 public:
 	// Creates a button given position, size, text size, text content, font, and text colors.
 	Button(sf::Vector2f pos, unsigned char_size, std::string text, const sf::Font& font, sf::Color default_color, sf::Color hover_color, sf::Color press_color, unsigned state);
-	//
+	// Creates a button given position and state.
 	Button(sf::Vector2f pos, unsigned state);
 	// Draws a button to a given window
 	void draw(sf::RenderWindow& win) const;
@@ -25,8 +25,6 @@ public:
 	void press();
 	// Resets the size and texture of the button to their original states when called
 	void reset();
-	// Changes the texture of the button to the normal texture when state_ is 3
-	virtual void release();
 	// Returns true if the button contains the mouse_pos
 	bool contains(const sf::Vector2f& mouse_pos) const;
 	// Sets the state_ of the button according to the parameter

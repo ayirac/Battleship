@@ -17,7 +17,7 @@ public:
 	void set_size(sf::Vector2f& size);
 	void set_position(sf::Vector2f& pos);
 	virtual void draw(sf::RenderWindow& win) const;
-	sf::RectangleShape& const get_shape();
+	sf::RectangleShape& get_shape();
 	virtual void set_text(std::string text);
 };
 

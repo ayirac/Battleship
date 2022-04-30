@@ -12,7 +12,7 @@ GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font
 	if (orientation == false) // horizontal
 	{
 		int current_int = 1;
-		for (int i = 0; i < marks; i++)
+		for (unsigned i = 0; i < marks; i++)
 		{
 			p_grid = new sf::Text(std::to_string(current_int), font, 30);
 			p_grid->setFillColor(sf::Color::White);
@@ -26,7 +26,7 @@ GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font
 	else if (orientation == true) // vertical
 	{
 		char current_char = 65;
-		for (int i = 0; i < marks; i++)
+		for (unsigned i = 0; i < marks; i++)
 		{
 			p_grid = new sf::Text(current_char, font, 30);
 			p_grid->setFillColor(sf::Color::White);
@@ -46,10 +46,3 @@ void GridMark::draw(sf::RenderWindow& win)
 		win.draw(this->mark_text_[i]);
 	}
 }
-
-
-/*
- *	  if horizontal, make 10 grid marker texts seperated by cell size on the x axis
- *		if vertical, make 10 grid marks seperated by cell size on the y axis
- *
- */

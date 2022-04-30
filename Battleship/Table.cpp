@@ -1,11 +1,11 @@
 #include "Table.h"
 
-Table::Table() : max_rows_(1)
+Table::Table() : max_rows_(1), next_text_x_(0), next_text_y_(0), row_spacing_(0)
 {
 
 }
 
-Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font, int rows) : row_spacing_(row_spacing), font_(font), max_rows_(rows)
+Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font, int rows) : row_spacing_(row_spacing), font_(font), max_rows_(rows), next_text_x_(0), next_text_y_(0)
 {
 	this->outline_shape_.setSize(size);
 	this->outline_shape_.setPosition(pos);
@@ -119,7 +119,7 @@ Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font
 }
 
 Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font,
-	std::vector<sf::Texture*> textures, int rows, bool lazy) : row_spacing_(row_spacing), font_(font), textures_(textures), max_rows_(rows)
+	std::vector<sf::Texture*> textures, int rows, bool lazy) : row_spacing_(row_spacing), font_(font), textures_(textures), max_rows_(rows), next_text_x_(0), next_text_y_(0)
 {
 	this->outline_shape_.setSize(size);
 	this->outline_shape_.setPosition(pos);

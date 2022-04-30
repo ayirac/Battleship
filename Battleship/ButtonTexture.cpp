@@ -27,7 +27,6 @@ ButtonTexture::ButtonTexture(const sf::Vector2f& pos, const sf::Vector2f& size, 
 	sf::Texture* press_tex, unsigned state) : Button(pos, state), original_size_(size)
 {
 	this->text_.setString(text);
-	// Setup shape_
 	this->shape_.setPosition(pos);
 	this->shape_.setSize(size);
 	this->textures_.push_back(normal_tex);
@@ -67,13 +66,6 @@ void ButtonTexture::press()
 	this->shape_.setTexture(this->textures_.at(1));
 }
 
-
-void ButtonTexture::release()
-{
-	//this->shape_.setTexture(this->textures_.at(0));
-	this->reset();
-}
-
 bool ButtonTexture::contains(const sf::Vector2f& mouse_pos) const
 {
 	if (this->shape_.getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
@@ -93,7 +85,7 @@ void ButtonTexture::reset()
 	this->text_.setCharacterSize(this->original_char_size_);
 	this->text_.setFillColor(this->colors_[0]);
 	this->shape_.setTexture(this->textures_.at(0));
-	this->text_.setPosition(sf::Vector2f((this->shape_.getPosition().x + this->shape_.getSize().x / 2) - (this->text_.getLocalBounds().width / 2)
-			, (this->shape_.getPosition().y + this->shape_.getSize().y / 2) - (this->text_.getLocalBounds().height / 2)));
+	this->text_.setPosition(sf::Vector2f((this->shape_.getPosition().x + this->shape_.getSize().x / 2) - (this->text_.getLocalBounds().width / 2), 
+		(this->shape_.getPosition().y + this->shape_.getSize().y / 2) - (this->text_.getLocalBounds().height / 2)));
 	
 }

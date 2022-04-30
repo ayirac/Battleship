@@ -1,6 +1,7 @@
 #include "Cell.h"
 
-Cell::Cell(unsigned size, sf::Texture* empty_tex) : size_(size), box_(sf::Vector2f(static_cast<float>(this->size_), static_cast<float>(this->size_))), type_("Empty"), visible_(false)
+Cell::Cell(unsigned size, sf::Texture* empty_tex) : size_(size), box_(sf::Vector2f(static_cast<float>(this->size_), static_cast<float>(this->size_))), type_("Empty"),
+	visible_(false), peg_(nullptr), texture_(empty_tex)
 {
 	this->box_.setOrigin(this->size_/2, this->size_/2);
 	this->box_.setOutlineColor(sf::Color::Red);

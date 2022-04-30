@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Button.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonTexture.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Figurine.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="GridMark.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageBox.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageTextBox.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Ship.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="TableScrollable.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Button.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonTexture.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Figurine.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GridMark.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageBox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageTextBox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Ship.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TableScrollable.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Table.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{c29bec78-531f-41ec-8719-76ebd58defc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Implementations">
+      <UniqueIdentifier>{65af4ffb-a29e-473c-a5fe-9e27da4400de}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

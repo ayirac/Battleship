@@ -5,7 +5,7 @@
 
 sf::Texture* Map::cell_empty_ = nullptr;
 
-Map::Map()
+Map::Map() : cell_size_(10)
 {
 	Cell cell(this->cell_size_, nullptr);
 	std::vector<Cell> cells;
@@ -120,7 +120,7 @@ void Map::add_ship(unsigned& x, unsigned& y, unsigned& rotation, std::string& ty
 
 bool Map::check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::string& type)
 {
-	unsigned hp;
+	unsigned hp = 0;
 	if (type == "Carrier")
 		hp = 5;
 	else if (type == "Battleship")
@@ -136,7 +136,7 @@ bool Map::check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::strin
 	{
 		for (unsigned i = 0; i < hp; i++)
 		{
-			if (this->cells_[x+i][y].get_type() != "Empty")
+			if (this->cells_[i + x][y].get_type() != "Empty")
 				ship_found = true;
 		}
 	}
@@ -144,7 +144,7 @@ bool Map::check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::strin
 	{
 		for (unsigned i = 0; i < hp; i++)
 		{
-			if (this->cells_[x][y+i].get_type() != "Empty")
+			if (this->cells_[x][i + y].get_type() != "Empty")
 				ship_found = true;
 		}
 	}

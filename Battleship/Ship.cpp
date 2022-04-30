@@ -1,8 +1,7 @@
 #include "Ship.h"
-
 #include <iostream>
 
-Ship::Ship(const std::string& type, std::vector<sf::Texture*> textures) : next_texture_(0), type_(type)
+Ship::Ship(const std::string& type, std::vector<sf::Texture*> textures) : next_texture_(0), type_(type), HP_(0)
 {
 	const std::string ship_types[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer" };
 	std::vector<sf::Texture*>::iterator itr;
@@ -22,7 +21,7 @@ Ship::Ship(const std::string& type, std::vector<sf::Texture*> textures) : next_t
 
 }
 
-Ship::Ship(const std::string& type) : type_(type)
+Ship::Ship(const std::string& type) : type_(type), next_texture_(0), HP_(0)
 {
 	std::cout << "Ship created\n";
 	const std::string ship_types[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer" };
