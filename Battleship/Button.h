@@ -18,7 +18,7 @@ public:
 	// Draws a button to a given window
 	void draw(sf::RenderWindow& win) const;
 	// Checks the state of the button when called and calls press(), hover(), and reset() depending on the state
-	void update(const sf::Vector2i& mouse_pos, sf::RenderWindow& window);
+	void update(const sf::Vector2f& mouse_pos, sf::RenderWindow& window);
 	// Changes the size of the button's elements when state_ is 1
 	void hover(unsigned x_off, unsigned y_off, unsigned char_off);
 	// Changes the texture of the button to the pressed texture when state_ is 2

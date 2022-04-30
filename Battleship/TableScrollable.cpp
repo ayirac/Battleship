@@ -69,7 +69,7 @@ TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned r
 	this->image_boxes_.push_back(scroll_bar);
 }
 
-void TableScrollable::draw(sf::RenderWindow& win, sf::Vector2i& mouse_pos)
+void TableScrollable::draw(sf::RenderWindow& win, sf::Vector2f& mouse_pos)
 {
 	win.draw(this->outline_shape_); // draw shape
 	for (int i = 0; i < this->lines_.size(); i++) // draw lines

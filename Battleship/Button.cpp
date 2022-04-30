@@ -15,13 +15,13 @@ void Button::draw(sf::RenderWindow& win) const
 	win.draw(this->text_);
 }
 
-void Button::update(const sf::Vector2i& mouse_pos, sf::RenderWindow& window)
+void Button::update(const sf::Vector2f& mouse_pos, sf::RenderWindow& window)
 {
 	if (this->state_ == 2)
 	{
 		this->press();
 	}
-	else if (this->text_.getGlobalBounds().contains(sf::Vector2f(static_cast<float>(mouse_pos.x), static_cast<float>(mouse_pos.y))))
+	else if (this->text_.getGlobalBounds().contains(mouse_pos))
 	{
 		this->state_ = 1;
 		this->hover(3, 1, 2);
@@ -55,7 +55,7 @@ void Button::reset()
 
 bool Button::contains(const sf::Vector2f& mouse_pos) const
 {
-	if (this->text_.getGlobalBounds().contains(mouse_pos.x, mouse_pos.y))
+	if (this->text_.getGlobalBounds().contains(mouse_pos))
 		return true;
 	return false;
 }

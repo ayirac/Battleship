@@ -159,7 +159,8 @@ void Game::release_button()
 		this->state_ = 3;
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
-		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
+		//this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
+		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/2, this->window_->getSize().y / 2.15);
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
@@ -170,6 +171,7 @@ void Game::release_button()
 
 void Game::main_menu()
 {
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
 	// Draw elements
 	this->image_boxes_.at(0)->draw(*this->window_);
 	this->image_boxes_.at(1)->draw(*this->window_);
@@ -178,19 +180,16 @@ void Game::main_menu()
 	this->buttons_.at(1).draw(*this->window_);
 	this->buttons_.at(2).draw(*this->window_);
 	// Update buttons
-	sf::Mouse mouse;
-	sf::Vector2i mouse_pos = mouse.getPosition(*this->window_);
-	this->buttons_.at(0).update(mouse_pos, *this->window_);
-	this->buttons_.at(1).update(mouse_pos, *this->window_);
-	this->buttons_.at(2).update(mouse_pos, *this->window_);
+	this->buttons_.at(0).update(world_pos, *this->window_);
+	this->buttons_.at(1).update(world_pos, *this->window_);
+	this->buttons_.at(2).update(world_pos, *this->window_);
 }
 
 
 void Game::ship_menu()
 {
 	// Get current mouse_pos to the window & convert to coordinates
-	sf::Vector2i mouse_pos = sf::Mouse::getPosition(*this->window_);
-	sf::Vector2f world_pos = this->window_->mapPixelToCoords(mouse_pos);
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
 	std::string figurine_type;
 
 	// Draw background and the maps
@@ -202,7 +201,7 @@ void Game::ship_menu()
 	for (int i = 0 ; i < 4; i++)
 	{
 		this->tex_buttons_.at(i).draw(*this->window_);
-		this->tex_buttons_.at(i).update(mouse_pos, *this->window_);
+		this->tex_buttons_.at(i).update(world_pos, *this->window_);
 	}
 
 	// Draw grids
@@ -228,7 +227,7 @@ void Game::ship_menu()
 void Game::game_start()
 {
 	// Get current mouse_pos to the window & convert to coordinates
-	sf::Vector2i mouse_pos = sf::Mouse::getPosition(*this->window_);
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
 
 	// Draw background and the maps
 	this->image_boxes_.at(0)->draw(*this->window_);
@@ -242,21 +241,21 @@ void Game::game_start()
 
 	// Draw buttons
 	this->tex_buttons_.at(4).draw(*this->window_);
-	this->tex_buttons_.at(4).update(mouse_pos, *this->window_);
+	this->tex_buttons_.at(4).update(world_pos, *this->window_);
 	this->tex_buttons_.at(5).draw(*this->window_);
-	this->tex_buttons_.at(5).update(mouse_pos, *this->window_);
+	this->tex_buttons_.at(5).update(world_pos, *this->window_);
 
 	// Draw grids
 	this->get_player_map().draw_grid_marks(*this->window_);
 	this->get_enemy_map().draw_grid_marks(*this->window_);
 
 	// Draw statistics
-	this->statistics_.draw(*this->window_, mouse_pos);
+	this->statistics_.draw(*this->window_, world_pos);
 
 	// Check if player is readying to attack
 	if (this->holding_figurine())
 	{
-		this->held_figurine_->drag(static_cast<sf::Vector2f>(mouse_pos));
+		this->held_figurine_->drag(world_pos);
 		this->held_figurine_->draw(*this->window_);
 	}
 
@@ -331,7 +330,7 @@ void Game::game_start()
 void Game::post_game()
 {
 	// Get current mouse_pos to the window & convert to coordinates
-	sf::Vector2i mouse_pos = sf::Mouse::getPosition(*this->window_);
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
 
 	// Draw background and the maps
 	this->image_boxes_.at(0)->draw(*this->window_);
@@ -344,7 +343,7 @@ void Game::post_game()
 	this->image_boxes_.at(5)->draw(*this->window_);
 
 	// Draw statistics
-	this->statistics_.draw(*this->window_, mouse_pos);
+	this->statistics_.draw(*this->window_, world_pos);
 	this->HMT_stats_.draw(*this->window_);
 	this->window_->draw(this->victory_text_);
 
@@ -364,7 +363,7 @@ void Game::post_game()
 
 	// Draw buttons
 	this->tex_buttons_[1].draw(*this->window_);
-	this->tex_buttons_[1].update(mouse_pos, *this->window_);
+	this->tex_buttons_[1].update(world_pos, *this->window_);
 }
 
 Map& Game::get_player_map()
