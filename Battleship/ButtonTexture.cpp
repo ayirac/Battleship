@@ -34,7 +34,7 @@ ButtonTexture::ButtonTexture(const sf::Vector2f& pos, const sf::Vector2f& size, 
 	this->shape_.setTexture(this->textures_.at(0));
 }
 
-void ButtonTexture::update(const sf::Vector2i& mouse_pos, sf::RenderWindow& window)
+void ButtonTexture::update(const sf::Vector2f& mouse_pos, sf::RenderWindow& window)
 {
 	if (this->state_ == 2)
 		this->press();

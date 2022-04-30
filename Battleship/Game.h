@@ -8,7 +8,6 @@
 #include "TextureManager.h"
 #include "Figurine.h"
 #include "ImageBox.h"
-#include "ImageTextBox.h"
 #include "TableScrollable.h"
 
 class Game {

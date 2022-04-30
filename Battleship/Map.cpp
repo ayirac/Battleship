@@ -377,6 +377,16 @@ void Map::reset_map()
 	}
 }
 
+sf::Vector2f& Map::get_left()
+{
+	return this->left_point_;
+}
+
+unsigned Map::get_cell_size()
+{
+	return this->get_cell_size();
+} 
+
 std::ostream& operator<<(std::ostream& output, Map& map)
 {
 	output << map.get_name() << std::endl << std::left << std::setw(10) << "Ship" << std::setw(10) << "HP" << std::endl;
