@@ -56,6 +56,8 @@ public:
 	void draw_grid_marks(sf::RenderWindow& win);
 	//
 	void reset_map();
+	sf::Vector2f& get_left();
+	unsigned get_cell_size();
 };
 
 

@@ -160,7 +160,7 @@ void Game::release_button()
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
 		//this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
-		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/2, this->window_->getSize().y / 2.15);
+		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/3.9, this->get_player_map().get_left().y -  2.8 * this->get_player_map().get_cell_size());
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}

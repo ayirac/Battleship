@@ -1,13 +1,19 @@
 #ifndef FIGURINE_H
 #define FIGURINE_H
+#include <string>
+#include <vector>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
 #include "Map.h"
+
 
 class Figurine
 {
 private:
 	sf::Sprite sprite_;
 	sf::Texture* texture_;
-	std::vector <sf::Texture*> ship_textures_;
+	std::vector<sf::Texture*> ship_textures_;
 	unsigned state_;
 	sf::Vector2f original_scale_;
 	sf::Vector2f original_pos_;

@@ -384,7 +384,7 @@ sf::Vector2f& Map::get_left()
 
 unsigned Map::get_cell_size()
 {
-	return this->get_cell_size();
+	return this->cell_size_;
 } 
 
 std::ostream& operator<<(std::ostream& output, Map& map)
