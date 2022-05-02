@@ -46,7 +46,7 @@ void Cell::draw(sf::Vector2f& loc, sf::RenderWindow& win)
 	if (this->peg_ != nullptr) 
 	{
 		sf::Vector2f peg_pos(loc.x - this->peg_->get_shape().getSize().x / 2, loc.y - this->peg_->get_shape().getSize().y / 2);
-		this->peg_->set_position(peg_pos);
+		this->peg_->get_shape().setPosition(peg_pos);
 		this->peg_->draw(win);
 	}
 }

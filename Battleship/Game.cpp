@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Game.h"
+
 #include "Map.h"
 
 // player_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f))  enemy_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2)),
@@ -16,7 +17,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	pegs.push_back(p_peg);
 
 	// Make font
-	sf::Font itc_kabel;
+	sf::Font itc_kabel; 
 	if (!itc_kabel.loadFromFile(".\\Resources\\Fonts\\ITCKabelStd-Bold.otf"))
 		std::cout << "Failed to load ITC_Kabel font\n";
 	this->fonts_.push_back(itc_kabel);
@@ -89,6 +90,22 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->tex_buttons_.push_back(attack);
 	this->tex_buttons_.push_back(surrender);
 
+	///// Make multiplayer menu buttons /////
+	ButtonTexture host_button(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Host Game", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
+	ButtonTexture join_button(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Join Game", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
+	this->tex_buttons_.push_back(host_button);
+	this->tex_buttons_.push_back(join_button);
+
+	// Inputbox
+	sf::Vector2f input_size(this->window_->getSize().x/2, this->window_->getSize().y/8), input_pos(this->window_->getSize().x / 2 - input_size.x/2, this->window_->getSize().y / 5);
+	std::string input_insturction("Enter an IP Address");
+	std::vector<sf::Texture*> input_textures;
+	input_textures.push_back(this->texturemanager_.get_texture(21));
+	input_textures.push_back(this->texturemanager_.get_texture(22));
+	this->IP_input_box_ = new InputBox(input_size, input_pos, input_insturction, 35, input_textures, this->fonts_[0], &this->multiplayer_);
+
 	// Setup figurines
 	sf::Vector2f figurine_pnts[5] = { sf::Vector2f(125, 1100), sf::Vector2f(350, 1100), sf::Vector2f(90, 1170), sf::Vector2f(250, 1170), sf::Vector2f(385, 1170) };
 	sf::Vector2f figurine_scale[5] = { sf::Vector2f(1, 1.1f), sf::Vector2f(1, .9f), sf::Vector2f(1.1f, 1.1f), sf::Vector2f(1, 1), sf::Vector2f(1, .95f) };
@@ -112,7 +129,7 @@ void Game::release_button()
 	}
 	else if (btn_text == "Multiplayer")
 	{
-		//this->state_ = 1;
+		this->state_ = 4;
 	}
 	else if (btn_text == "Credits")
 	{
@@ -159,10 +176,21 @@ void Game::release_button()
 		this->state_ = 3;
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
-		//this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
-		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/3.9, this->get_player_map().get_left().y -  2.8 * this->get_player_map().get_cell_size());
+		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/3.9,
+			this->get_player_map().get_left().y -  2.8 * this->get_player_map().get_cell_size());
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
+	}
+	else if (btn_text == "Host Game")							// Multiplayer setup buttons
+	{
+		if (!this->multiplayer_.hosting())
+			this->multiplayer_.host();
+		else
+			std::cout << "You're already hosting a server!\n";
+	}
+	else if (btn_text == "Join Game")							
+	{
+		this->IP_input_box_->set_state(1);
 	}
 	this->held_button_->reset();
 	this->disable_buttons();
@@ -224,7 +252,7 @@ void Game::ship_menu()
 
 }
 
-void Game::game_start()
+void Game::singleplayer_game_start()
 {
 	// Get current mouse_pos to the window & convert to coordinates
 	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
@@ -311,7 +339,8 @@ void Game::game_start()
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Victory");
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
-		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
+		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+			this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
 		this->victory_text_.setFillColor(sf::Color(255, 157, 25));
 		this->victory_text_.setOutlineColor(sf::Color::Black);
 	}
@@ -320,7 +349,8 @@ void Game::game_start()
 		this->state_ = 3;
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
-		this->victory_text_.setPosition(this->window_->getSize().x / 2.25, this->window_->getSize().y / 2.15);
+		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+			this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
@@ -364,6 +394,32 @@ void Game::post_game()
 	// Draw buttons
 	this->tex_buttons_[1].draw(*this->window_);
 	this->tex_buttons_[1].update(world_pos, *this->window_);
+}
+
+void Game::multiplayer_setup()
+{
+	// Get current mouse_pos to the window & convert to coordinates
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
+
+	// Draw background and the maps
+	this->image_boxes_.at(0)->draw(*this->window_);
+
+	// Draw buttons
+	this->tex_buttons_.at(6).draw(*this->window_);
+	this->tex_buttons_.at(6).update(world_pos, *this->window_);
+	this->tex_buttons_.at(7).draw(*this->window_);
+	this->tex_buttons_.at(7).update(world_pos, *this->window_);
+
+	if (this->IP_input_box_->get_state() == 1)
+	{
+		this->IP_input_box_->update();
+		this->IP_input_box_->draw(*this->window_, world_pos);
+	}
+		
+}
+
+void Game::multiplayer_game_start()
+{
 }
 
 Map& Game::get_player_map()
@@ -476,7 +532,7 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 		}
 	}
 
-	// check if a button was clocked on
+	// check if a button was clicked on
 	for (int i = 0; i < this->buttons_.size(); i++)
 	{
 		if (this->buttons_[i].contains(mouse_pos) && this->buttons_[i].get_state() != 3)
@@ -487,7 +543,7 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 		}
 	}
 
-	// check if a tex_button was clocked on
+	// check if a tex_button was clicked on
 	for (int i = 0; i < this->tex_buttons_.size(); i++)
 	{
 		if (this->tex_buttons_[i].contains(mouse_pos) && this->tex_buttons_[i].get_state() != 3) // excludes buttons in state 3 (disabled)
@@ -497,6 +553,12 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 			break;
 		}
 	}
+
+	// Check if an input textbox was clicked on
+	if (this->IP_input_box_->contains(mouse_pos) && this->IP_input_box_->get_state() == 1)
+		this->IP_input_box_->set_edit_mode(true);
+
+
 }
 
 void Game::release_figurine(const sf::Vector2f& mouse_pos)
@@ -861,6 +923,25 @@ void Game::disable_buttons()
 		this->tex_buttons_[4].set_state(0);								// Enable post-game buttons 1
 			
 	}
+	else if (this->state_ == 4)
+	{
+		for (int i = 0; i < 3; i++) {									// Disable menu buttons
+			this->buttons_[i].set_state(3);
+		}
+		for (int i = 6; i < 8; i++)										// Enable multiplayer setup buttons
+			this->tex_buttons_[i].set_state(0);
+	}
 	for (int i = 0; i < this->buttons_.size(); i++)
 		this->buttons_[i].set_state(3);
 }
+
+InputBox* Game::get_inputbox()
+{
+	return this->IP_input_box_;
+}
+
+Multiplayer& Game::get_multiplayer()
+{
+	return this->multiplayer_;
+}
+

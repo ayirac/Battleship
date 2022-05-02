@@ -9,6 +9,7 @@ private:
 	std::vector<sf::Texture*> textures_;
 	sf::Vector2f original_size_;
 public:
+	ButtonTexture();
 	// Create a textured button with text centered at the middle
 	ButtonTexture(const sf::Vector2f& pos, const sf::Vector2f& size, const unsigned& char_size, const std::string& text,
 		const sf::Font& font, sf::Texture* normal_tex, sf::Texture* press_tex, sf::Color default_color,

@@ -43,6 +43,15 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Implementations</Filter>
     </ClCompile>
+    <ClCompile Include="Box.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="InputBox.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiplayer.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -82,6 +91,21 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Box.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PopupBox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="InputBox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatBox.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiplayer.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

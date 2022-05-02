@@ -11,6 +11,7 @@ protected:
 	unsigned state_;			// 0 default, 1 hover, 2 press, 3 invisible
 	const sf::Color colors_[3]; // 0 default, 1 hover, 2 press
 public:
+	Button();
 	// Creates a button given position, size, text size, text content, font, and text colors.
 	Button(sf::Vector2f pos, unsigned char_size, std::string text, const sf::Font& font, sf::Color default_color, sf::Color hover_color, sf::Color press_color, unsigned state);
 	// Creates a button given position and state.

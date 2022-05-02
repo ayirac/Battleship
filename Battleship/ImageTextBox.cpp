@@ -1,7 +1,5 @@
 #include "ImageTextBox.h"
 
-#include <iostream>
-
 ImageTextBox::ImageTextBox() : ImageBox() { }
 
 

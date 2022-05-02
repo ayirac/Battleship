@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <thread>
 #include <SFML/Graphics.hpp>
 #include "Map.h"
 #include "Button.h"
@@ -10,6 +11,9 @@
 #include "ImageBox.h"
 #include "ImageTextBox.h"
 #include "TableScrollable.h"
+#include <SFML/Network.hpp>
+#include "InputBox.h"
+#include "Multiplayer.h"
 
 //class Figurine;
 
@@ -43,6 +47,9 @@ private:
 	HMT_stats player_stats_;
 	HMT_stats enemy_stats_;
 	Table HMT_stats_;
+	InputBox* IP_input_box_;
+	// multiplayer
+	Multiplayer multiplayer_;
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow
 	Game(sf::RenderWindow* window);
@@ -52,10 +59,14 @@ public:
 	void randomize_ships(bool players_ships);
 	// A screen that allows the user to setup their ship layout given Buttons and Figurines. Called when state_ = 1
 	void ship_menu();
-	// A screen that allows the user to play against an enemy player. Called when state_ = 2
-	void game_start();
+	// A screen that allows the user to play against an enemy computer player. Called when state_ = 2
+	void singleplayer_game_start();
 	// Screen displays the post-game stats. Called when state_ = 3
 	void post_game();
+	// A screen that allows the user to host/join a multiplayer game
+	void multiplayer_setup();
+	// A screen that allows the user to play against an enemy player in multiplayer. Called when state_ = 5
+	void multiplayer_game_start();
 	// Returns the player_map_
 	Map& get_player_map();
 	// Returns the enemy_map_
@@ -101,5 +112,9 @@ public:
 	void reset_hmt_stats();
 	// Disables all buttons that don't belong to the current state of the game
 	void disable_buttons();
+	// Returns the pointer to the inputbox
+	InputBox* get_inputbox();
+	//
+	Multiplayer& get_multiplayer();
 };
 #endif

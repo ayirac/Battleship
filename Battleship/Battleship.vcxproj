@@ -123,7 +123,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Misc\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;sfml-system-s-d.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-audio-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;ws2_32.lib;sfml-system-s-d.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-audio-s-d.lib;sfml-network-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonTexture.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -154,22 +155,29 @@
     <ClCompile Include="GridMark.cpp" />
     <ClCompile Include="ImageBox.cpp" />
     <ClCompile Include="ImageTextBox.cpp" />
+    <ClCompile Include="InputBox.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Multiplayer.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TableScrollable.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="ChatBox.h" />
     <ClInclude Include="Figurine.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GridMark.h" />
     <ClInclude Include="ImageBox.h" />
     <ClInclude Include="ImageTextBox.h" />
+    <ClInclude Include="InputBox.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Multiplayer.h" />
+    <ClInclude Include="PopupBox.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="ButtonTexture.h" />
     <ClInclude Include="Table.h" />

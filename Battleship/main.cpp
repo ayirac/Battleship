@@ -1,3 +1,4 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 
@@ -13,6 +14,9 @@ int main()
 
     while (window.isOpen())
     {
+        // debug check for host connection
+        if (!battleship.get_multiplayer().get_listener().Disconnected)
+	        std::cout << "Hosting!\n";
         window.clear();
         // Draw a the current screen
     	if (battleship.get_state() == 0)
@@ -20,9 +24,11 @@ int main()
     	else if (battleship.get_state() == 1)
     		battleship.ship_menu();
     	else if (battleship.get_state() == 2)
-    		battleship.game_start();
+    		battleship.singleplayer_game_start();
         else if (battleship.get_state() == 3)
             battleship.post_game();
+        else if (battleship.get_state() == 4)
+            battleship.multiplayer_setup();
 
         sf::Event event;
     	while (window.pollEvent(event))
@@ -32,8 +38,9 @@ int main()
 
             // General keybinds
             if (event.type == sf::Event::KeyPressed)
-                if (event.key.code == sf::Keyboard::Escape)
+                if (event.key.code == sf::Keyboard::End)
                     window.close();
+                    
             // Main menu keybinds
             if (battleship.get_state() == 0)
             {
@@ -125,7 +132,49 @@ int main()
                         battleship.get_statistics().release_button();
                 }
             }
+            // Multiplayer setup keybinds
+            else if (battleship.get_state() == 4)
+            {
+                if (event.type == sf::Event::MouseButtonPressed)
+                {
+                    battleship.process_click(mouse_pos);
+                    if (battleship.get_inputbox()->get_state() == 1)
+                        battleship.get_inputbox()->process_click(mouse_pos);
+                }
 
+                else if (event.type == sf::Event::MouseButtonReleased)
+                {
+                    if (battleship.holding_button())
+                        battleship.release_button();
+                    if (battleship.get_inputbox()->edit_mode() && !battleship.get_inputbox()->contains(mouse_pos))
+                        battleship.get_inputbox()->set_edit_mode(false);
+                    if (battleship.get_inputbox()->holding_button())
+                        battleship.get_inputbox()->release_button();
+                }
+
+                if (battleship.get_inputbox()->edit_mode()) // checks for user input for the text input box when its in edit mode
+                {
+                    if (event.key.code == sf::Keyboard::Escape)
+                        battleship.get_inputbox()->set_edit_mode(false);
+                    if (event.type == sf::Event::TextEntered)
+                    {
+                        if (event.text.unicode == '\b')
+                        {
+                            if (battleship.get_inputbox()->get_textfield_size() > 0)
+								battleship.get_inputbox()->delete_end_textfield();
+                        }
+                        else if (event.text.unicode == '\n')
+                        {
+                            battleship.get_inputbox()->get_multiplayer()->connect(battleship.get_inputbox()->get_textfield_entry());
+                        }
+                        else if (event.text.unicode < 128)
+                        {
+                            std::cout << "ASCII CHAR: " << static_cast<char>(event.text.unicode) << std::endl;
+                            battleship.get_inputbox()->process_keyboard(static_cast<char>(event.text.unicode));
+                        }
+                    }
+                }
+            }
         }
         window.display();
     }

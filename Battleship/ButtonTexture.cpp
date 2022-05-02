@@ -1,5 +1,9 @@
 #include "ButtonTexture.h"
 
+ButtonTexture::ButtonTexture()
+{
+}
+
 ButtonTexture::ButtonTexture(const sf::Vector2f& pos, const sf::Vector2f& size, const unsigned& char_size, const std::string& text,
                              const sf::Font& font, sf::Texture* normal_tex, sf::Texture* press_tex, sf::Color default_color,
                              sf::Color hover_color, sf::Color press_color, unsigned state) : Button(pos, char_size, text, font, default_color, hover_color, press_color, state), original_size_(size)

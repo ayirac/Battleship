@@ -1,5 +1,7 @@
 #include "Button.h"
 
+Button::Button(){}
+
 Button::Button(sf::Vector2f pos, unsigned char_size, std::string text, const sf::Font& font,
                sf::Color default_color, sf::Color hover_color, sf::Color press_color, unsigned state) :
 	text_(text, font, char_size), original_pos_(pos), original_char_size_(char_size), state_(state), colors_{default_color, hover_color, press_color}
