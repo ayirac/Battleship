@@ -1,6 +1,6 @@
 #include "Box.h"
 
-Box::Box(sf::Vector2f size, sf::Vector2f pos) : shape_(size)
+Box::Box(sf::Vector2f size, sf::Vector2f pos) : shape_(size), state_(0)
 {
 	this->shape_.setPosition(pos);
 }

@@ -38,7 +38,7 @@ ButtonTexture::ButtonTexture(const sf::Vector2f& pos, const sf::Vector2f& size, 
 	this->shape_.setTexture(this->textures_.at(0));
 }
 
-void ButtonTexture::update(const sf::Vector2f& mouse_pos, sf::RenderWindow& window)
+void ButtonTexture::update(sf::Vector2f& mouse_pos, sf::RenderWindow& window)
 {
 	if (this->state_ == 2)
 		this->press();
@@ -91,4 +91,14 @@ void ButtonTexture::reset()
 	this->shape_.setTexture(this->textures_.at(0));
 	this->text_.setPosition(sf::Vector2f((this->shape_.getPosition().x + this->shape_.getSize().x / 2) - (this->text_.getLocalBounds().width / 2), 
 		(this->shape_.getPosition().y + this->shape_.getSize().y / 2) - (this->text_.getLocalBounds().height / 2)));
+}
+
+sf::RectangleShape& ButtonTexture::get_shape()
+{
+	return this->shape_;
+}
+
+float ButtonTexture::difference(ButtonTexture& button) const
+{
+	return this->shape_.getGlobalBounds().top - button.get_shape().getGlobalBounds().top;
 }

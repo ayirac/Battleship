@@ -30,7 +30,6 @@ protected:
 	sf::Font font_;
 	unsigned max_rows_;
 	unsigned row_spacing_;
-	//unsigned current_row_;
 	std::vector<sf::Texture*> textures_;
 public:
 	Table();

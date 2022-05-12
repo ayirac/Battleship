@@ -146,10 +146,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonTexture.cpp" />
     <ClCompile Include="Cell.cpp" />
+    <ClCompile Include="ChatBox.cpp" />
     <ClCompile Include="Figurine.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GridMark.cpp" />
@@ -165,6 +167,7 @@
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cell.h" />

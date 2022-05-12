@@ -12,7 +12,6 @@ protected:
 public:
 	Box(sf::Vector2f size, sf::Vector2f pos);
 	virtual void draw(sf::RenderWindow& win) const = 0;
-	virtual void set_text(std::string text) = 0;
 	sf::RectangleShape& get_shape();
 	unsigned& get_state();
 	void set_state(unsigned state);

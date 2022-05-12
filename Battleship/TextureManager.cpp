@@ -67,7 +67,16 @@ TextureManager::TextureManager() : ship_textures_(5)
 		else
 			this->game_textures_.push_back(tex);
 	}
-	
+
+	// Load spritemaps
+	std::string sprite_textures[1] = { "loading"};
+	for (int i = 0; i < 1; i++)
+	{
+		if (!tex.loadFromFile(".\\Resources\\Textures\\Spritemaps\\" + sprite_textures[i] + ".png"))
+			std::cout << "Failed to load " << sprite_textures[i] << ".png" << std::endl;
+		else
+			this->sprite_maps_.push_back(tex);
+	}
 }
 
 std::vector<sf::Texture*> TextureManager::get_ship_texture(unsigned id)
@@ -102,3 +111,5 @@ std::vector<sf::Texture*> TextureManager::get_ship_texture(std::string& type)
 }
 
 sf::Texture* TextureManager::get_texture(unsigned id) { return &this->game_textures_[id]; }
+
+sf::Texture* TextureManager::get_spritemap(unsigned id) { return &this->sprite_maps_[id]; }

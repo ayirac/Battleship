@@ -14,8 +14,9 @@
 #include <SFML/Network.hpp>
 #include "InputBox.h"
 #include "Multiplayer.h"
+#include "Animation.h"
+#include "ChatBox.h"
 
-//class Figurine;
 
 class Game {
 private:
@@ -48,8 +49,13 @@ private:
 	HMT_stats enemy_stats_;
 	Table HMT_stats_;
 	InputBox* IP_input_box_;
+	ChatBox* chatbox_;
 	// multiplayer
 	Multiplayer multiplayer_;
+	// animations
+	std::vector<Animation> animations_;
+	std::vector<sf::Sprite> animated_sprites_;
+
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow
 	Game(sf::RenderWindow* window);
@@ -63,9 +69,11 @@ public:
 	void singleplayer_game_start();
 	// Screen displays the post-game stats. Called when state_ = 3
 	void post_game();
-	// A screen that allows the user to host/join a multiplayer game
+	// A screen that allows the user to host/join a multiplayer game state_ = 4
 	void multiplayer_setup();
-	// A screen that allows the user to play against an enemy player in multiplayer. Called when state_ = 5
+	// A screen that allows players to select their ships and ready up for a game. state_ = 5
+	void multiplayer_ship_menu();
+	// A screen that allows the user to play against an enemy player in multiplayer. Called when state_ = 6
 	void multiplayer_game_start();
 	// Returns the player_map_
 	Map& get_player_map();
@@ -73,6 +81,8 @@ public:
 	Map& get_enemy_map();
 	// Returns the current state_
 	const unsigned& get_state() const;
+	//
+	void set_state(unsigned state);
 	// Remove a figurine given a string&
 	void remove_figurine(std::string& type);
 	// Processes mouse click events to determine the element that is clicked on
@@ -114,7 +124,14 @@ public:
 	void disable_buttons();
 	// Returns the pointer to the inputbox
 	InputBox* get_inputbox();
+	// Returns the pointer to the chatbox
+	ChatBox* get_chatbox();
 	//
 	Multiplayer& get_multiplayer();
+	//
+	Animation& get_animation(unsigned id);
+	//
+	sf::Sprite* get_sprite(unsigned id);
+	void set_chatbox_state(unsigned state);
 };
 #endif

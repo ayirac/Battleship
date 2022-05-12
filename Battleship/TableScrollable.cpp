@@ -96,7 +96,7 @@ void TableScrollable::add_entry(sf::Vector2i player_hit, sf::Vector2i enemy_hit,
 	this->player_hits_.push_back(player);
 	this->enemy_hits_.push_back(enemy);
 
-	char char_equivalent = 65 + player_hit.y;
+	char char_equivalent = 65 + player_hit.y; // to get ABCD.. from the x-axis
 	std::string temp;
 	temp += char_equivalent;
 	std::string player_coord = "(" + temp + ", " + std::to_string(player_hit.x + 1) + ")";

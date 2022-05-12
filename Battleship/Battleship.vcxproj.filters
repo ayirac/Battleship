@@ -52,6 +52,12 @@
     <ClCompile Include="Multiplayer.cpp">
       <Filter>Implementations</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatBox.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -106,6 +112,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Multiplayer.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
