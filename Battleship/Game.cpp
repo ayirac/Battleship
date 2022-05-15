@@ -6,7 +6,7 @@
 // player_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f))  enemy_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2)),
 Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr), held_button_(nullptr), state_(0),
                                        ai_ship_found_(false), ai_reset_first_hit_(true), ai_orientation_reset_(false),
-                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}
+                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false)
 { 
 	// Setup pegs
 	std::vector<ImageBox*> pegs;
@@ -121,7 +121,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->IP_input_box_ = new InputBox(input_size, input_pos, input_header, 35, input_textures, this->fonts_[0], &this->multiplayer_, this->get_sprite(0), 30);
 
 	// Chatbox
-	sf::Vector2f chatbox_size(this->window_->getSize().x / 3.6, this->window_->getSize().y / 5.2), chatbox_pos(this->window_->getSize().x / 120 , this->window_->getSize().y / 1.25);
+	sf::Vector2f chatbox_size(this->window_->getSize().x / 3.6, this->window_->getSize().y / 5.2), chatbox_pos(this->window_->getSize().x / 140 , this->window_->getSize().y / 1.25);
 	std::string chatbox_header("Chatbox");
 	std::vector<sf::Texture*> chatbox_textures;
 	chatbox_textures.push_back(this->texturemanager_.get_texture(21));
@@ -145,6 +145,18 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 		this->figurines_.push_back(ship_figurine);
 	}
 	this->figurine_peg_ = new Figurine(this->texturemanager_.get_texture(12), sf::Vector2f(1, 1), "Red Peg");
+
+
+	// Test popup box
+	std::vector<sf::Texture*> popup_box_textures;
+	popup_box_textures.push_back(this->texturemanager_.get_texture(23));
+	popup_box_textures.push_back(this->texturemanager_.get_texture(24));
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(600, 200), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 2), "Waiting for a connection",
+		&this->fonts_[0], 0, "", popup_box_textures});
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(900, 250), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Placing Ships",
+		&this->fonts_[0], 1, "Drag a ship to your map. You can use WASD to rotate it", popup_box_textures });
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(900, 300), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Attacking the Enemy",
+		&this->fonts_[0], 2, "Hit Spacebar to prepare to target a grid and click.|Whomever ships float at the end shall be victorious.", popup_box_textures });
 }
 
 void Game::release_button()
@@ -174,8 +186,17 @@ void Game::release_button()
 	}
 	else if (btn_text == "Exit to Menu")
 	{
-		std::cout << "Exiting to Menu.\n";
-		this->reset_game();
+		if (this->state_ == 2 || this->state_ == 3)
+			this->reset_game();
+		else if (this->get_inputbox()->get_state() == 1)
+			this->get_inputbox()->set_state(0);
+		if (this->multiplayer_.hosting())
+		{
+			this->multiplayer_.stop_hosting();
+			this->popup_boxes_[0]->set_state(0);
+		}
+			
+		
 		this->state_ = 0;
 	}
 	else if (btn_text == "Reset Ships")
@@ -188,6 +209,7 @@ void Game::release_button()
 		// start game & randomize enemy ships if all players ships are added
 		if (this->figurines_.empty())
 		{
+			this->popup_seen_ = false;
 			this->state_ = 2;
 			this->randomize_ships(false);
 		}
@@ -215,22 +237,19 @@ void Game::release_button()
 		{
 			this->get_inputbox()->set_state(0);
 		}
-		else
+		if (!this->multiplayer_.hosting())
 		{
-			if (!this->multiplayer_.hosting())
-				this->multiplayer_.host();
-			else
-				std::cout << "You're already hosting a server!\n";
+			this->popup_boxes_[0]->set_state(1);
+			this->multiplayer_.host();
 		}
-		
+		else
+			std::cout << "You're already hosting a server!\n";
 	}
 	else if (btn_text == "Join Game")							
 	{
 		this->IP_input_box_->set_state(1);
-		/* STOP HOSTING
-		 * if (!this->multiplayer_.hosting())
-			this->multiplayer_.host(); 
-		 */
+		if (this->multiplayer_.hosting())
+			this->multiplayer_.stop_hosting();  
 		
 	}
 	this->held_button_->reset();
@@ -292,6 +311,17 @@ void Game::ship_menu()
 			this->held_figurine_->drag(world_pos);
 	}
 
+	// Draw popupbox if it is triggered
+	if (this->popup_seen_ == false)
+	{
+		this->popup_boxes_[1]->set_state(1);
+		this->popup_seen_ = true;
+	}
+	if (this->popup_boxes_[1]->get_state() == 1)
+	{
+		this->popup_boxes_[1]->draw(*this->window_);
+		this->popup_boxes_[1]->update(*this->window_, world_pos);
+	}
 }
 
 void Game::singleplayer_game_start()
@@ -321,6 +351,18 @@ void Game::singleplayer_game_start()
 
 	// Draw statistics
 	this->statistics_.draw(*this->window_, world_pos);
+
+	// Draw popupbox if it is triggered
+	if (this->popup_seen_ == false)
+	{
+		this->popup_boxes_[2]->set_state(1);
+		this->popup_seen_ = true;
+	}
+	if (this->popup_boxes_[2]->get_state() == 1)
+	{
+		this->popup_boxes_[2]->draw(*this->window_);
+		this->popup_boxes_[2]->update(*this->window_, world_pos);
+	}
 
 	// Check if player is readying to attack
 	if (this->holding_figurine())
@@ -396,6 +438,7 @@ void Game::singleplayer_game_start()
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
 		this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
 	}
+
 		
 }
 
@@ -472,6 +515,15 @@ void Game::multiplayer_setup()
 		this->IP_input_box_->update(*this->window_, world_pos);
 		this->IP_input_box_->draw(*this->window_);
 	}
+
+	// Draw popupbox if it is triggered
+	if (this->popup_boxes_[0]->get_state() == 1)
+	{
+		this->popup_boxes_[0]->draw(*this->window_);
+		this->popup_boxes_[0]->update(*this->window_, world_pos);
+		if (!this->multiplayer_.hosting())
+			this->popup_boxes_[0]->set_state(0);
+	}
 }
 
 void Game::multiplayer_ship_menu()
@@ -515,6 +567,18 @@ void Game::multiplayer_ship_menu()
 		this->figurines_[i].update(world_pos);
 		if (this->holding_figurine())
 			this->held_figurine_->drag(world_pos);
+	}
+
+	// Draw popupbox if it is triggered
+	if (this->popup_seen_ == false)
+	{
+		this->popup_boxes_[1]->set_state(1);
+		this->popup_seen_ = true;
+	}
+	if (this->popup_boxes_[1]->get_state() == 1)
+	{
+		this->popup_boxes_[1]->draw(*this->window_);
+		this->popup_boxes_[1]->update(*this->window_, world_pos);
 	}
 }
 
@@ -1069,5 +1133,22 @@ sf::Sprite* Game::get_sprite(unsigned id)
 void Game::set_chatbox_state(unsigned state)
 {
 	this->chatbox_->set_state(state);
+}
+
+void Game::check_popup_boxes_exit()
+{
+	for (int i = 0; i < this->popup_boxes_.size(); i++)
+	{
+		if (this->popup_boxes_[i]->holding_button())
+			this->popup_boxes_[i]->release_button();
+	}
+}
+void Game::process_popup_box(sf::Vector2f& mouse_pos)
+{
+	for (int i = 0; i < this->popup_boxes_.size(); i++)
+	{
+		if (this->popup_boxes_[i]->process_click(mouse_pos) && i == 0)
+			this->multiplayer_.stop_hosting();
+	}
 }
 

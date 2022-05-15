@@ -28,8 +28,8 @@ protected:
 	std::string original_header_;
 	const unsigned MAX_TEXTFIELD_ENTRY;
 public:
-	InputBox(sf::Vector2f& size, sf::Vector2f& pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, unsigned max_textfield_entry);
-	InputBox(sf::Vector2f& size, sf::Vector2f& pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, sf::Sprite* loading_sprite, unsigned max_textfield_entry);
+	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, unsigned max_textfield_entry);
+	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, sf::Sprite* loading_sprite, unsigned max_textfield_entry);
 	~InputBox();
 	void draw(sf::RenderWindow& win) const;
 	// Updates the textfield animations

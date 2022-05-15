@@ -63,11 +63,10 @@ void Multiplayer::host()
 
 void Multiplayer::thread_host()
 {
-	sf::TcpListener listener;
-	listener.listen(this->port_);
+	this->listener_socket_.listen(this->port_);
 
 	// Endless loop that waits for new connections
-	if (listener.accept(this->connect_socket_) == sf::Socket::Done)
+	if (this->listener_socket_.accept(this->connect_socket_) == sf::Socket::Done)
 	{
 		std::cout << "New connection received from " << this->connect_socket_.getRemoteAddress() << std::endl;
 		this->connected_ = true;
@@ -88,12 +87,7 @@ bool Multiplayer::hosting() // not actually hosting, more like a check to see if
 void Multiplayer::update()
 {
 	if (this->hosting_finished_)
-	{
-		this->host_thread_->join();
-		delete this->host_thread_;
-		this->host_thread_ = nullptr;
-		this->hosting_finished_ = false;
-	}
+		this->stop_hosting();
 
 	if (this->connecting_finished_)
 	{
@@ -145,3 +139,16 @@ void Multiplayer::unflag_new_data()
 {
 	this->new_data_ = false;
 }
+
+void Multiplayer::stop_hosting()
+{
+	if (this->hosting())
+	{
+		this->listener_socket_.close();
+		this->host_thread_->join();
+		delete this->host_thread_;
+		this->host_thread_ = nullptr;
+		this->hosting_finished_ = false;
+	}
+}
+

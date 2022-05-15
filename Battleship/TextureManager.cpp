@@ -59,8 +59,8 @@ TextureManager::TextureManager() : ship_textures_(5)
 	}
 
 	// Load multiplayer textures
-	std::string multi_textures[2] = { "enter-button", "enter-button-press" };
-	for (int i = 0; i < 2; i++)
+	std::string multi_textures[4] = { "enter-button", "enter-button-press", "popupbox-button", "popupbox-button-pressed"};
+	for (int i = 0; i < 4; i++)
 	{
 		if (!tex.loadFromFile(".\\Resources\\Textures\\" + multi_textures[i] + ".png"))
 			std::cout << "Failed to load " << multi_textures[i] << ".png" << std::endl;

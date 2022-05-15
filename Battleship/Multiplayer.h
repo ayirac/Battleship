@@ -44,5 +44,6 @@ public:
 	ChatMessage& get_new_message();
 	bool new_data();
 	void unflag_new_data();
+	void stop_hosting();
 };
 #endif

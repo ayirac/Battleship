@@ -58,6 +58,9 @@
     <ClCompile Include="ChatBox.cpp">
       <Filter>Implementations</Filter>
     </ClCompile>
+    <ClCompile Include="PopupBox.cpp">
+      <Filter>Implementations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">

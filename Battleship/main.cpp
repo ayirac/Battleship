@@ -75,6 +75,7 @@ int main()
                 if (event.type == sf::Event::MouseButtonPressed)
                 {
                     battleship.process_click(mouse_pos);
+                    battleship.process_popup_box(mouse_pos);
                 }
                 else if (event.type == sf::Event::MouseButtonReleased)
                 {
@@ -82,6 +83,7 @@ int main()
 						battleship.release_figurine(mouse_pos);
                     if (battleship.holding_button())
                         battleship.release_button();
+                    battleship.check_popup_boxes_exit();
                 }
                 if (event.type == sf::Event::KeyPressed)
                 {
@@ -109,6 +111,7 @@ int main()
                         }
                     }
                      battleship.get_statistics().process_click(mouse_pos);
+                     battleship.process_popup_box(mouse_pos);
                     
                 }
                 else if (event.type == sf::Event::MouseButtonReleased)
@@ -119,6 +122,7 @@ int main()
                         battleship.release_button();
                     else if (battleship.get_statistics().holding_button())
                         battleship.get_statistics().release_button();
+                    battleship.check_popup_boxes_exit();
                 }
                 if (event.type == sf::Event::KeyPressed)
                 {
@@ -154,6 +158,7 @@ int main()
                     battleship.process_click(mouse_pos);
                     if (battleship.get_inputbox()->get_state() == 1)
                         battleship.get_inputbox()->process_click(mouse_pos);
+                    battleship.process_popup_box(mouse_pos);
                 }
 
                 else if (event.type == sf::Event::MouseButtonReleased)
@@ -164,6 +169,7 @@ int main()
                         battleship.get_inputbox()->set_edit_mode(false);
                     if (battleship.get_inputbox()->holding_button())
                         battleship.get_inputbox()->release_button();
+                    battleship.check_popup_boxes_exit();
                 }
 
                 if (battleship.get_inputbox()->edit_mode()) // checks for user input for the text input box when its in edit mode
@@ -199,6 +205,7 @@ int main()
                     battleship.process_click(mouse_pos);
                     if (battleship.get_chatbox()->get_state() == 1)
                         battleship.get_chatbox()->process_click(mouse_pos);
+                    battleship.process_popup_box(mouse_pos);
                 }
 
                 else if (event.type == sf::Event::MouseButtonReleased)
@@ -209,6 +216,7 @@ int main()
                         battleship.get_chatbox()->set_edit_mode(false);
                     if (battleship.get_chatbox()->holding_button())
                         battleship.get_chatbox()->release_button();
+                    battleship.check_popup_boxes_exit();
                 }
 
                 if (battleship.get_chatbox()->edit_mode()) // checks for user input for the text input box when its in edit mode

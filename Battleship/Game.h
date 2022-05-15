@@ -16,6 +16,7 @@
 #include "Multiplayer.h"
 #include "Animation.h"
 #include "ChatBox.h"
+#include "PopupBox.h"
 
 
 class Game {
@@ -55,6 +56,8 @@ private:
 	// animations
 	std::vector<Animation> animations_;
 	std::vector<sf::Sprite> animated_sprites_;
+	std::vector<PopupBox*> popup_boxes_;
+	bool popup_seen_;
 
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow
@@ -133,5 +136,7 @@ public:
 	//
 	sf::Sprite* get_sprite(unsigned id);
 	void set_chatbox_state(unsigned state);
+	void process_popup_box(sf::Vector2f& mouse_pos);
+	void check_popup_boxes_exit();
 };
 #endif

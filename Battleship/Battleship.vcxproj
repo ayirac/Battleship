@@ -161,6 +161,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Multiplayer.cpp" />
+    <ClCompile Include="PopupBox.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Table.cpp" />
     <ClCompile Include="TableScrollable.cpp" />
