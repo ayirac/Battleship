@@ -58,6 +58,7 @@ private:
 	std::vector<sf::Sprite> animated_sprites_;
 	std::vector<PopupBox*> popup_boxes_;
 	bool popup_seen_;
+	bool multiplayer_ready_;
 
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow

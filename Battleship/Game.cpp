@@ -23,9 +23,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 
 	int loading_frames = 16;
 	for (int i = 0; i < loading_frames; i++)
-	{
 		this->animations_[0].addFrame({ sf::IntRect(0, 48 * i, 48, 48), 0.0625 }); // 48 x 49
-	}
 
 	// Make font
 	sf::Font itc_kabel; 
@@ -80,18 +78,14 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 
 	// Make ship menu buttons
 	sf::Vector2f btn_size(150, 50);
-	ButtonTexture randomize_button(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Randomize", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture exit_button(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Exit to Menu", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture reset_button(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Reset Ships", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture start_button(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Start Game", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	this->tex_buttons_.push_back(randomize_button);
-	this->tex_buttons_.push_back(exit_button);
-	this->tex_buttons_.push_back(reset_button);
-	this->tex_buttons_.push_back(start_button);
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Randomize", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Exit to Menu", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Reset Ships", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Start Game", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 
 	// Setup singleplayer battle buttons
 	ButtonTexture attack(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Attack", this->fonts_.at(0),
@@ -102,15 +96,12 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->tex_buttons_.push_back(surrender);
 
 	///// Make multiplayer menu buttons /////
-	ButtonTexture host_button(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Host Game", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture join_button(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Join Game", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture ready_button(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Ready Up", this->fonts_.at(0),
-		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	this->tex_buttons_.push_back(host_button);
-	this->tex_buttons_.push_back(join_button);
-	this->tex_buttons_.push_back(ready_button);
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Host Game", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Join Game", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Ready Up", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 
 	// Inputbox
 	sf::Vector2f input_size(this->window_->getSize().x/2, this->window_->getSize().y/8), input_pos(this->window_->getSize().x / 2 - input_size.x/2, this->window_->getSize().y / 5);
@@ -250,6 +241,23 @@ void Game::release_button()
 		this->IP_input_box_->set_state(1);
 		if (this->multiplayer_.hosting())
 			this->multiplayer_.stop_hosting();  
+		
+	}
+	else if (btn_text == "Ready Up")
+	{
+		if (this->figurines_.size() == 0)
+		{
+			this->multiplayer_ready_ = true;
+			if (this->multiplayer_.get_host())
+			{
+				// wait for enemy to ready up/send data
+			}
+			else
+			{
+				// send data to enemy that you're ready, since they're the host
+				this->multiplayer_.send_data("")
+			}
+		}
 		
 	}
 	this->held_button_->reset();
@@ -545,11 +553,13 @@ void Game::multiplayer_ship_menu()
 	this->chatbox_->draw(*this->window_);
 
 	// Draw & update the buttons
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		this->tex_buttons_.at(i).draw(*this->window_);
 		this->tex_buttons_.at(i).update(world_pos, *this->window_);
 	}
+	this->tex_buttons_.at(8).draw(*this->window_);
+	this->tex_buttons_.at(8).update(world_pos, *this->window_);
 
 	// Draw grids
 	this->get_player_map().draw_grid_marks(*this->window_);

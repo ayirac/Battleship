@@ -5,7 +5,7 @@
 #include <SFML/Network/TcpListener.hpp>
 
 Multiplayer::Multiplayer() : port_(55001), hosting_finished_(false), connecting_finished_(false), host_thread_(nullptr), connecting_thread_(nullptr), listening_thread_(nullptr), connected_(false),
-	new_data_(false) {}
+	new_data_(false), host_(false) {}
 
 void Multiplayer::connect(sf::IpAddress ip)
 {
@@ -45,9 +45,21 @@ void Multiplayer::thread_look()
 			this->new_chat_message_ = new ChatMessage{ "Enemy", "", sf::Color() };
 			packet >> this->new_chat_message_->message;
 			this->new_chat_message_->color = sf::Color(255, 0, 0);
+			// Data type codes - $M - Message, $R - Ready, $A - Attack Info
+			if (this->new_chat_message_->message.find("$M"))
+			{
+				this->new_data_ = true;
+			}
+			else if (this->new_chat_message_->message.find("$R"))
+			{
+				// get ready // CONT HERE
+			}
+			else if (this->new_chat_message_->message.find("$A"))
+			{
+				// get attack info
+			}
 
 			std::cout << "Received " << packet.getDataSize() << " bytes\t" << "Message: " << this->new_chat_message_->message << std::endl;
-			this->new_data_ = true;
 		}
 			
 	}
@@ -70,6 +82,7 @@ void Multiplayer::thread_host()
 	{
 		std::cout << "New connection received from " << this->connect_socket_.getRemoteAddress() << std::endl;
 		this->connected_ = true;
+		this->host_ = true;
 		this->listening_thread_ = new std::thread(&Multiplayer::thread_look, this);
 	}
 	else
@@ -150,5 +163,10 @@ void Multiplayer::stop_hosting()
 		this->host_thread_ = nullptr;
 		this->hosting_finished_ = false;
 	}
+}
+
+bool Multiplayer::get_host()
+{
+	return this->host_;
 }
 

@@ -27,6 +27,7 @@ private:
 	bool connecting_finished_;
 	bool connected_;
 	bool new_data_;
+	bool host_;
 	ChatMessage* new_chat_message_;
 public:
 	Multiplayer();
@@ -45,5 +46,6 @@ public:
 	bool new_data();
 	void unflag_new_data();
 	void stop_hosting();
+	bool get_host();
 };
 #endif

@@ -200,14 +200,13 @@ int main()
             }
             else if (battleship.get_state() == 5)
             {
-	            if (event.type == sf::Event::MouseButtonPressed)
+                if (event.type == sf::Event::MouseButtonPressed)
                 {
                     battleship.process_click(mouse_pos);
                     if (battleship.get_chatbox()->get_state() == 1)
                         battleship.get_chatbox()->process_click(mouse_pos);
                     battleship.process_popup_box(mouse_pos);
                 }
-
                 else if (event.type == sf::Event::MouseButtonReleased)
                 {
                     if (battleship.holding_button())
@@ -216,7 +215,17 @@ int main()
                         battleship.get_chatbox()->set_edit_mode(false);
                     if (battleship.get_chatbox()->holding_button())
                         battleship.get_chatbox()->release_button();
+                    if (battleship.holding_figurine())
+                        battleship.release_figurine(mouse_pos);
                     battleship.check_popup_boxes_exit();
+                }
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == Keyboard::A || event.key.code == Keyboard::D)
+                    {
+                        if (battleship.holding_figurine())
+                            battleship.rotate_held_figurine(event.key.code);
+                    }
                 }
 
                 if (battleship.get_chatbox()->edit_mode()) // checks for user input for the text input box when its in edit mode
