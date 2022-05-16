@@ -255,7 +255,7 @@ void Game::release_button()
 			else
 			{
 				// send data to enemy that you're ready, since they're the host
-				this->multiplayer_.send_data("")
+				//this->multiplayer_.send_data("")
 			}
 		}
 		
