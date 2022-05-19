@@ -151,7 +151,7 @@ bool Map::check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::strin
 	return ship_found;
 }
 
-bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vector<sf::Texture*> ship_textures, unsigned& rotation)
+bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vector<sf::Texture*> ship_textures, unsigned& rotation, sf::Vector2u& ship_pos)
 {
 	for (unsigned i = 0; i < this->cells_.size(); i++)
 	{
@@ -187,7 +187,10 @@ bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vecto
 				else if (rotation == 90 && i != 0)
 					i--;
 				if (!this->check_overlap(i, j, rotation, type))
+				{
 					this->add_ship(i, j, rotation, type, ship_textures, true);
+					ship_pos.x = i, ship_pos.y = j;
+				}
 				else
 					return false;
 				return true;
@@ -385,7 +388,8 @@ sf::Vector2f& Map::get_left()
 unsigned Map::get_cell_size()
 {
 	return this->cell_size_;
-} 
+}
+
 
 std::ostream& operator<<(std::ostream& output, Map& map)
 {

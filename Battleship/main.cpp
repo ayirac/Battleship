@@ -24,9 +24,9 @@ int main()
         window.clear();
 
         // State binding to respective draw functions
-        // check if connected to another client
-        if (battleship.get_multiplayer().connected() && battleship.get_state() != 5)
+        if (battleship.get_multiplayer().connected_init() && battleship.get_state() != 5)
         {
+            battleship.get_multiplayer().disable_connected_init();
             battleship.set_state(5);
             battleship.set_chatbox_state(1);
         }
@@ -42,6 +42,8 @@ int main()
             battleship.multiplayer_setup();
         else if (battleship.get_state() == 5)
             battleship.multiplayer_ship_menu();
+        else if (battleship.get_state() == 6)
+            battleship.multiplayer_game_start();
 
 
         sf::Event event;
@@ -104,9 +106,9 @@ int main()
                     {
                         bool successful_player_attack = false, successful_enemy_attack = false;
                         sf::Vector2i player_attack_pos, enemy_attack_pos;
-                        if (battleship.process_hit(mouse_pos, false, player_attack_pos, successful_player_attack))
+                        if (battleship.process_hit(mouse_pos, player_attack_pos, successful_player_attack))
                         {
-                        	battleship.process_ai_hit(enemy_attack_pos, successful_enemy_attack);
+                            battleship.process_ai_hit(enemy_attack_pos, successful_enemy_attack);
                             battleship.get_statistics().add_entry(player_attack_pos, enemy_attack_pos, successful_player_attack, successful_enemy_attack);
                         }
                     }
@@ -124,7 +126,7 @@ int main()
                         battleship.get_statistics().release_button();
                     battleship.check_popup_boxes_exit();
                 }
-                if (event.type == sf::Event::KeyPressed)
+            	if (event.type == sf::Event::KeyPressed)
                 {
                     if (event.key.code == Keyboard::Space)
                     {
@@ -141,6 +143,8 @@ int main()
                 {
                     battleship.get_statistics().process_click(mouse_pos);
                     battleship.process_click(mouse_pos);
+                    if (battleship.get_chatbox()->get_state() == 1 && battleship.get_multiplayer().connected())
+                        battleship.get_chatbox()->process_click(mouse_pos);
                 }
                 else if (event.type == sf::Event::MouseButtonReleased)
                 {
@@ -148,6 +152,39 @@ int main()
                         battleship.release_button();
                 	else if (battleship.get_statistics().holding_button())
                         battleship.get_statistics().release_button();
+
+                    if (battleship.get_multiplayer().connected()) // Chatbox keybinds for multiplayer
+                    {
+                        if (battleship.get_chatbox()->edit_mode() && !battleship.get_chatbox()->contains(mouse_pos))
+                            battleship.get_chatbox()->set_edit_mode(false);
+                            if (battleship.get_chatbox()->holding_button())
+                                battleship.get_chatbox()->release_button();
+                    }
+                }
+                if (battleship.get_chatbox()->edit_mode() && battleship.get_multiplayer().connected()) // checks for user input for the text input box when its in edit mode
+                {
+                    if (event.type == sf::Event::KeyReleased)
+                    {
+                        if (event.key.code == sf::Keyboard::Escape)
+                            battleship.get_chatbox()->set_edit_mode(false);
+                    }
+                    else if (event.key.code == sf::Keyboard::Enter && battleship.get_multiplayer().get_connecting() == nullptr)
+                    {
+                        battleship.get_chatbox()->enter_key_pressed();
+                    }
+                    else if (event.type == sf::Event::TextEntered)
+                    {
+                        if (event.text.unicode == '\b')
+                        {
+                            if (battleship.get_chatbox()->get_textfield_size() > 0)
+                                battleship.get_chatbox()->delete_end_textfield();
+                        }
+                        else if (event.text.unicode < 128)
+                        {
+                            std::cout << "ASCII CHAR: " << static_cast<char>(event.text.unicode) << std::endl;
+                            battleship.get_chatbox()->process_keyboard(static_cast<char>(event.text.unicode));
+                        }
+                    }
                 }
             }
             // Multiplayer setup keybinds
@@ -181,9 +218,7 @@ int main()
                         battleship.get_inputbox()->set_state(1);
                         battleship.get_multiplayer().connect(sf::IpAddress(battleship.get_inputbox()->get_textfield_entry()));
                     }
-                        
-
-                    if (event.type == sf::Event::TextEntered)
+                    else if (event.type == sf::Event::TextEntered)
                     {
                         if (event.text.unicode == '\b')
                         {
@@ -227,20 +262,18 @@ int main()
                             battleship.rotate_held_figurine(event.key.code);
                     }
                 }
-
                 if (battleship.get_chatbox()->edit_mode()) // checks for user input for the text input box when its in edit mode
                 {
                     if (event.type == sf::Event::KeyReleased)
                     {
                         if (event.key.code == sf::Keyboard::Escape)
                             battleship.get_chatbox()->set_edit_mode(false);
-                        else if (event.key.code == sf::Keyboard::Enter && battleship.get_multiplayer().get_connecting() == nullptr)
-                        {
-                            battleship.get_chatbox()->enter_key_pressed();
-                        }
                     }
-
-                    if (event.type == sf::Event::TextEntered)
+                    else if (event.key.code == sf::Keyboard::Enter && battleship.get_multiplayer().get_connecting() == nullptr)
+                    {
+                        battleship.get_chatbox()->enter_key_pressed();
+                    }
+                    else if (event.type == sf::Event::TextEntered)
                     {
                         if (event.text.unicode == '\b')
                         {
@@ -254,6 +287,79 @@ int main()
                         }
                     }
                 }
+            }
+            else if (battleship.get_state() == 6)
+            {
+	            if (event.type == sf::Event::MouseButtonPressed)
+	            {
+                    battleship.process_click(mouse_pos);
+	                if (battleship.get_chatbox()->get_state() == 1)
+	                    battleship.get_chatbox()->process_click(mouse_pos);
+                    battleship.get_statistics().process_click(mouse_pos);
+	                battleship.process_popup_box(mouse_pos);
+
+                    if (battleship.holding_figurine())
+                    {
+                        bool successful_player_attack = false, successful_enemy_attack = false;
+                        sf::Vector2i player_attack_pos, enemy_attack_pos;
+                        if (battleship.process_hit(mouse_pos, player_attack_pos, successful_player_attack))
+                        {
+                            battleship.set_turn(false);
+                            battleship.send_attack_data(player_attack_pos, successful_player_attack);
+                            battleship.get_statistics().add_entry(player_attack_pos, successful_player_attack, true);
+                            battleship.update_round();
+                        }
+                    }
+	            }
+	            else if (event.type == sf::Event::MouseButtonReleased)
+	            {
+                    if (battleship.holding_figurine())
+                        battleship.release_figurine();
+	                else if (battleship.holding_button())
+	                    battleship.release_button();
+                    else if (battleship.get_statistics().holding_button())
+                        battleship.get_statistics().release_button();
+	                if (battleship.get_chatbox()->edit_mode() && !battleship.get_chatbox()->contains(mouse_pos))
+	                    battleship.get_chatbox()->set_edit_mode(false);
+	                if (battleship.get_chatbox()->holding_button())
+	                    battleship.get_chatbox()->release_button();
+	                battleship.check_popup_boxes_exit();
+	            }
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == Keyboard::Space)
+                    {
+                        if (battleship.holding_figurine())
+                            battleship.release_figurine();
+                        else
+                            battleship.ready_attack();
+                    }
+                }
+	            if (battleship.get_chatbox()->edit_mode()) // checks for user input for the text input box when its in edit mode
+	            {
+	                if (event.type == sf::Event::KeyReleased)
+	                {
+	                    if (event.key.code == sf::Keyboard::Escape)
+	                        battleship.get_chatbox()->set_edit_mode(false);
+	                }
+	                else if (event.key.code == sf::Keyboard::Enter && battleship.get_multiplayer().get_connecting() == nullptr)
+	                {
+	                    battleship.get_chatbox()->enter_key_pressed();
+	                }
+	                else if (event.type == sf::Event::TextEntered)
+	                {
+	                    if (event.text.unicode == '\b')
+	                    {
+	                        if (battleship.get_chatbox()->get_textfield_size() > 0)
+	                            battleship.get_chatbox()->delete_end_textfield();
+	                    }
+	                    else if (event.text.unicode < 128)
+	                    {
+	                        std::cout << "ASCII CHAR: " << static_cast<char>(event.text.unicode) << std::endl;
+	                        battleship.get_chatbox()->process_keyboard(static_cast<char>(event.text.unicode));
+	                    }
+	                }
+	            }
             }
         }
 

@@ -1,9 +1,12 @@
 ﻿#include "TableScrollable.h"
 
+#include <iostream>
+
 TableScrollable::TableScrollable() : Table(), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1), held_button_(nullptr) {}
 
 TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font,
-	std::vector<sf::Texture*> textures, int rows) : Table(pos, size, row_spacing, font, textures, rows, true), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1), held_button_(nullptr)
+	std::vector<sf::Texture*> textures, int rows) : Table(pos, size, row_spacing, font, textures, rows, true), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1),
+	held_button_(nullptr), player_added_(false), enemy_added_(false)
 {
 	// Setup Header/horizontal lines
 	sf::RectangleShape header(sf::Vector2f(this->outline_shape_.getGlobalBounds().width, 3));
@@ -76,11 +79,12 @@ void TableScrollable::draw(sf::RenderWindow& win, sf::Vector2f& mouse_pos)
 		win.draw(this->lines_[i]);
 	for (int i = 0; i < this->header_text_.size(); i++) // draw header
 		win.draw(this->header_text_[i]);
-	for (int e = 0; e < this->texts_.size(); e++)
+	for (int j = 0; j < 3; j++)
 	{
-		for (unsigned i = this->front_row_; i < this->texts_[0].size() && i < this->max_rows_ + this->front_row_; i++) // draw text
-			win.draw(this->texts_[e][i]);
+		for (unsigned i = this->front_row_; i < this->texts_[j].size() && i < this->max_rows_ + this->front_row_; i++) // draw text
+			win.draw(this->texts_[j][i]);
 	}
+	
 	for (int i = 0; i < this->image_boxes_.size(); i++) // draw images
 		this->image_boxes_[i].draw(win);
 	for (int i = 0; i < this->buttons_.size(); i++) // draw buttons
@@ -136,7 +140,7 @@ void TableScrollable::add_entry(sf::Vector2i player_hit, sf::Vector2i enemy_hit,
 	}
 
 	// If the table is filled past its original capacity then shift the table downwards
-  	if (this->texts_[0].size() >= this->max_rows_)
+	if (this->texts_[0].size() >= this->max_rows_)
 	{
 		this->shift_down();
 		round.setPosition((column1_x - this->outline_shape_.getGlobalBounds().left) / 2 + this->outline_shape_.getGlobalBounds().left - this->lines_[1].getGlobalBounds().width / 2,
@@ -165,18 +169,113 @@ void TableScrollable::add_entry(sf::Vector2i player_hit, sf::Vector2i enemy_hit,
 	this->current_round_++;
 }
 
+void TableScrollable::add_entry(sf::Vector2i hit, bool& successful_attack, bool player)
+{
+	
+	if (player)
+		this->player_hits_.push_back(Hit{ hit, successful_attack });
+	else
+		this->enemy_hits_.push_back(Hit{ hit, successful_attack });
+
+	char char_equivalent = 65 + hit.y; // to get ABCD.. from the x-axis
+	std::string temp;
+	temp += char_equivalent;
+	std::string player_coord = "(" + temp + ", " + std::to_string(hit.x + 1) + ")";
+	float column1_x = this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width * 0.2,
+		column2_x = this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width * 0.6 + this->lines_[1].getGlobalBounds().width / 2;
+
+	// add text
+	sf::Text round(std::to_string(this->current_round_), this->font_, 24);
+	sf::Text p_hits(player_coord, this->font_, 25);
+	round.setOrigin(round.getGlobalBounds().width / 2, round.getGlobalBounds().height / 2);
+	p_hits.setOrigin(p_hits.getGlobalBounds().width / 2, p_hits.getGlobalBounds().height / 2);
+	round.setFillColor(sf::Color(245, 163, 53));
+	if (successful_attack)
+		p_hits.setFillColor(sf::Color::Red);
+	else
+		p_hits.setFillColor(sf::Color(209, 192, 175));
+
+	if (this->texts_[0].empty()) {
+		this->bottom_row_++;
+		this->front_row_++;
+	}
+	
+	if (1 + this->bottom_row_ <= this->texts_[0].size() && this->texts_[1].size() == this->texts_[2].size())  // doesn't allow movement if at bottom of table
+		this->bottom_row_++;
+	while (this->bottom_row_ != this->texts_[0].size() && this->texts_[1].size() == this->texts_[2].size()) // move to bottom of table
+	{
+		this->player_added_ = false;
+		this->enemy_added_ = false;
+		shift_down();
+		this->bottom_row_++;
+	}
+	// If the table is filled past its original capacity then shift the table downwards
+	sf::Vector2f hit_location;
+	if (this->texts_[0].size() >= this->max_rows_)
+	{
+
+		if (!this->player_added_ && !this->enemy_added_)
+		{
+			this->shift_down();
+			this->player_added_ = false;
+			this->enemy_added_ = false;
+		}
+		hit_location.y = this->outline_shape_.getGlobalBounds().top + this->max_rows_ * this->row_spacing_ + this->row_spacing_ / 2 - this->lines_[0].getGlobalBounds().height;
+	}
+	else
+		hit_location.y = this->outline_shape_.getGlobalBounds().top + this->current_row_ * this->row_spacing_ + this->row_spacing_ / 2 - this->lines_[0].getGlobalBounds().height;
+	if (player)
+		hit_location.x = (column2_x - column1_x) / 2 + column1_x - this->lines_[1].getGlobalBounds().width / 2;
+	else
+		hit_location.x = ((this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width) - column2_x) / 2 + column2_x - this->lines_[2].getGlobalBounds().width / 2;
+	round.setPosition((column1_x - this->outline_shape_.getGlobalBounds().left) / 2 + this->outline_shape_.getGlobalBounds().left - this->lines_[1].getGlobalBounds().width / 2, hit_location.y);
+	p_hits.setPosition(hit_location.x, hit_location.y);
+
+
+	if (!this->enemy_added_ && !this->player_added_)
+		this->texts_[0].push_back(round);
+	if (player)
+	{
+		this->texts_[1].push_back(p_hits);
+		this->player_added_ = true;
+	}
+	else
+	{
+		this->texts_[2].push_back(p_hits);
+		this->enemy_added_ = true;
+	}
+	if (this->texts_[1].size() == this->texts_[2].size()) // this->texts_[1].size() == this->texts_[2].size()
+	{
+		this->current_row_ = (this->current_round_ + 1) % (this->max_rows_ + 1);
+		if (this->current_row_ == 0)
+			this->current_row_++;
+		this->current_round_++;
+		this->enemy_added_ = false;
+		this->player_added_ = false;
+	}
+}
+
 void TableScrollable::release_button()
 {
 	const std::string btn_text = this->held_button_->get_text();
 	if (btn_text == "Up")
 	{
-		if (this->front_row_ > 0)
+		if (this->front_row_ > 0 && (this->enemy_hits_.size() == this->player_hits_.size()))
 			shift_up();
 	}
-	else if (btn_text == "Down" && (this->enemy_hits_.size() > 9 && 1 + this->bottom_row_ != this->texts_[0].size()))
+	else if ((btn_text == "Down"))
 	{
-		shift_down();
-		this->bottom_row_++;
+		if (this->enemy_hits_.size() > 9)
+		{
+			if (this->bottom_row_ + 1 != this->texts_[0].size())
+			{
+				if (this->enemy_hits_.size() == this->player_hits_.size())
+				{
+					shift_down();
+					this->bottom_row_++;
+				}
+			}
+		}
 	}
 
 	this->held_button_->reset();

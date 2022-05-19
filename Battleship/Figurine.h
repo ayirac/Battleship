@@ -35,7 +35,7 @@ public:
 	// Resets the size and texture of the Figurine to their original states when called
 	void reset();
 	// Attempts to add a Ship to a Map if the Figurine is released over the map, else it will reset
-	bool release(Map& map, const sf::Vector2f& mouse_pos, unsigned rotation);
+	bool release(Map& map, const sf::Vector2f& mouse_pos, unsigned rotation, sf::Vector2u& ship_pos);
 	// Returns the type of the Figurine
 	std::string& get_type();
 	// Rotates the Figurine by an angle

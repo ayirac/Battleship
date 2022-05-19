@@ -6,7 +6,7 @@
 // player_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f))  enemy_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2)),
 Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr), held_button_(nullptr), state_(0),
                                        ai_ship_found_(false), ai_reset_first_hit_(true), ai_orientation_reset_(false),
-                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false)
+                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false), loading_(false), turn_(false), start_(true)
 { 
 	// Setup pegs
 	std::vector<ImageBox*> pegs;
@@ -148,6 +148,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 		&this->fonts_[0], 1, "Drag a ship to your map. You can use WASD to rotate it", popup_box_textures });
 	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(900, 300), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Attacking the Enemy",
 		&this->fonts_[0], 2, "Hit Spacebar to prepare to target a grid and click.|Whomever ships float at the end shall be victorious.", popup_box_textures });
+
 }
 
 void Game::release_button()
@@ -156,39 +157,40 @@ void Game::release_button()
 	std::cout << btn_text << std::endl;
 	if (btn_text == "Singleplayer")							// Main menu buttons
 	{
-		this->state_ = 1;
+		this->set_state(1);
 	}
 	else if (btn_text == "Multiplayer")
 	{
-		this->state_ = 4;
+		this->set_state(4);
 	}
 	else if (btn_text == "Credits")
 	{
-		//this->state_ = 1;
+
 	}
 	else if (btn_text == "Randomize")						// Ship menu buttons
 	{
 		this->get_player_map().remove_ships();
-		this->randomize_ships(true);
-
-		size_t const vec_size = this->figurines_.size();
+		this->randomize_ships(true);	size_t const vec_size = this->figurines_.size();
 		for (int i = 0; i < vec_size; i++)
 			this->remove_figurine(this->figurines_[0].get_type());
 	}
 	else if (btn_text == "Exit to Menu")
 	{
+		if (this->state_ == 1)
+		{
+			this->get_player_map().remove_ships();
+			this->add_discarded_figurines();
+		}
 		if (this->state_ == 2 || this->state_ == 3)
 			this->reset_game();
-		else if (this->get_inputbox()->get_state() == 1)
+		if (this->get_inputbox()->get_state() == 1)
 			this->get_inputbox()->set_state(0);
 		if (this->multiplayer_.hosting())
 		{
 			this->multiplayer_.stop_hosting();
 			this->popup_boxes_[0]->set_state(0);
 		}
-			
-		
-		this->state_ = 0;
+		this->set_state(0);
 	}
 	else if (btn_text == "Reset Ships")
 	{
@@ -201,7 +203,7 @@ void Game::release_button()
 		if (this->figurines_.empty())
 		{
 			this->popup_seen_ = false;
-			this->state_ = 2;
+			this->set_state(2);
 			this->randomize_ships(false);
 		}
 		else {
@@ -214,7 +216,7 @@ void Game::release_button()
 	}
 	else if (btn_text == "Surrender")					
 	{
-		this->state_ = 3;
+		this->set_state(3);
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
 		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size()/3.9,
@@ -245,23 +247,24 @@ void Game::release_button()
 	}
 	else if (btn_text == "Ready Up")
 	{
-		if (this->figurines_.size() == 0)
+		if (this->figurines_.empty())
 		{
-			this->multiplayer_ready_ = true;
 			if (this->multiplayer_.get_host())
 			{
 				// wait for enemy to ready up/send data
+				this->multiplayer_.toggle_ready(true);
 			}
 			else
 			{
 				// send data to enemy that you're ready, since they're the host
-				//this->multiplayer_.send_data("")
+				std::string r = "$R";
+				this->multiplayer_.send_data(r);
 			}
 		}
 		
 	}
 	this->held_button_->reset();
-	this->disable_buttons();
+
 	this->held_button_ = nullptr;
 }
 
@@ -427,7 +430,7 @@ void Game::singleplayer_game_start()
 	// Check victory status
 	if (this->get_enemy_map().get_ships().empty())
 	{
-		this->state_ = 3;
+		this->set_state(3);
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Victory");
 		this->victory_text_.setFillColor(sf::Color(244, 163, 53));
@@ -438,7 +441,7 @@ void Game::singleplayer_game_start()
 	}
 	else if (this->get_player_map().get_ships().empty())
 	{
-		this->state_ = 3;
+		this->set_state(3);
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
 		this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
@@ -487,6 +490,13 @@ void Game::post_game()
 	// Draw buttons
 	this->tex_buttons_[1].draw(*this->window_);
 	this->tex_buttons_[1].update(world_pos, *this->window_);
+
+	// Draw chatbox if multiplayer
+	if (this->get_multiplayer().connected())
+	{
+		this->chatbox_->update(*this->window_, world_pos);
+		this->chatbox_->draw(*this->window_);
+	}
 }
 
 void Game::multiplayer_setup()
@@ -579,6 +589,7 @@ void Game::multiplayer_ship_menu()
 			this->held_figurine_->drag(world_pos);
 	}
 
+
 	// Draw popupbox if it is triggered
 	if (this->popup_seen_ == false)
 	{
@@ -590,10 +601,265 @@ void Game::multiplayer_ship_menu()
 		this->popup_boxes_[1]->draw(*this->window_);
 		this->popup_boxes_[1]->update(*this->window_, world_pos);
 	}
+
+	// Check for ready status if host
+	if (this->multiplayer_.get_host())
+	{
+		if (this->multiplayer_.ready(true) && this->multiplayer_.ready(false) && !this->loading_)
+		{
+			this->multiplayer_.send_data("$S");
+			// send the enemy player
+			sf::Packet packet;
+			packet << "$P";
+			for (int i = 0; i < 5; i++)
+				packet << this->downloaded_ships_.ship_types[i] << this->downloaded_ships_.ship_placements[i].x << this->downloaded_ships_.ship_placements[i].y <<
+				this->downloaded_ships_.ship_rotations[i];
+			this->multiplayer_.send_data(packet);
+			this->loading_ = true;
+		}
+	}
+	else if (this->multiplayer_.next_stage())
+	{
+		// send the enemy host your map
+		sf::Packet packet;
+		packet << "$P";
+		for (int i = 0; i < 5; i++)
+			packet << this->downloaded_ships_.ship_types[i] << this->downloaded_ships_.ship_placements[i].x << this->downloaded_ships_.ship_placements[i].y <<
+			this->downloaded_ships_.ship_rotations[i];
+		this->multiplayer_.send_data(packet);
+		//this->set_state(6); // CONT, ship multiplayer... getting hits, just need to finialize the logic
+	}
+
+	// Check if the enemy map has been downloaded before starting the game
+	if (this->multiplayer_.downloaded_map())
+	{
+		this->downloaded_ships_ = this->multiplayer_.download_ships();
+		for (int i = 0; i < 5; i++)
+		{
+			std::cout << "Adding " << this->downloaded_ships_.ship_types[i] << " AT " << this->downloaded_ships_.ship_placements[i].x << ", " << this->downloaded_ships_.ship_placements[i].y
+				<< " rot: " << this->downloaded_ships_.ship_rotations[i] << std::endl;
+			this->enemy_map_.add_ship(this->downloaded_ships_.ship_placements[i].x, this->downloaded_ships_.ship_placements[i].y, this->downloaded_ships_.ship_rotations[i],
+				this->downloaded_ships_.ship_types[i], this->texturemanager_.get_ship_texture(this->downloaded_ships_.ship_types[i]), false);
+		}
+		this->set_state(6);
+	}
+	
 }
 
 void Game::multiplayer_game_start()
 {
+	// Check victory status if host
+	if (this->multiplayer_.get_host())
+	{
+		// Startup script that performs a coin flip for whoever goes first
+		if (this->start_)
+		{
+			this->start_ = false;
+			bool coin_flip_won = rand() % 1;
+			if (coin_flip_won)
+			{
+				this->turn_ = true;
+				this->tex_buttons_[4].set_state(0); // enable attack button
+				std::cout << "Your turn\n";
+			}
+			else
+			{
+				this->tex_buttons_[4].set_state(3); // disable attack button
+				this->multiplayer_.send_data("$F");
+			}
+		}
+		// Check ship status
+		unsigned i = 0;
+		while (i < this->get_enemy_map().get_ships().size())
+		{
+			if (this->get_enemy_map().get_ships()[i]->get_hp() == 0)
+			{
+				if (!this->get_enemy_map().get_ships()[i]->get_ship_cells()[0]->visible())
+				{
+					for (int j = 0; j < this->get_enemy_map().get_ships()[i]->get_ship_cells().size(); j++) // Reveal the ship on the map after it has been sunk
+						this->get_enemy_map().get_ships()[i]->get_ship_cells()[j]->set_texture(this->get_enemy_map().get_ships()[i]->get_ship_cells()[j]->get_texture(), this->get_enemy_map().get_ships()[i]->get_type(), true);
+				}
+
+				delete this->get_enemy_map().get_ships()[i];
+				this->get_enemy_map().get_ships().erase(this->get_enemy_map().get_ships().begin() + i);
+			}
+			else
+				i++;
+		}
+		i = 0;
+		while (i < this->get_player_map().get_ships().size())
+		{
+			if (this->get_player_map().get_ships()[i]->get_hp() == 0) // ship has been sunk
+			{
+				// delete the ship's coordinates from ai_hits
+				for (int j = 0; j < this->ai_hits.size(); j++)
+				{
+					if (this->player_map_.get_cells()[this->ai_hits[j].x][this->ai_hits[j].y].get_type() == this->get_player_map().get_ships()[i]->get_type())
+					{
+						this->ai_hits.erase(this->ai_hits.begin() + j);
+						j--;
+					}
+				}
+
+				this->ai_ship_found_ = false;
+				if (!this->ai_hits.empty())
+					this->ai_first_hit_ = this->ai_hits[0];
+				this->ai_ship_found_orientation = 0;
+				this->ai_orientation_reset_ = false;
+				delete this->get_player_map().get_ships()[i];
+				this->get_player_map().get_ships().erase(this->get_player_map().get_ships().begin() + i);
+			}
+			else
+				i++;
+		}
+
+		if (this->get_enemy_map().get_ships().empty())
+		{
+			this->set_state(3);
+			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
+			this->victory_text_.setString("Victory");
+			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
+			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
+			this->victory_text_.setFillColor(sf::Color(255, 157, 25));
+			this->victory_text_.setOutlineColor(sf::Color::Black);
+		}
+		else if (this->get_player_map().get_ships().empty())
+		{
+			this->set_state(3);
+			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
+			this->victory_text_.setString("Defeat");
+			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
+			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
+			this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
+		}
+		
+	}
+	// Check if it is the player's turn
+	if (this->multiplayer_.get_turn())
+	{
+		if (this->multiplayer_.get_new_attack())
+			this->process_multiplayer_hit(this->multiplayer_.get_hit());
+		this->update_round();
+		this->turn_ = true;
+		this->tex_buttons_[4].set_state(0); // enable attack button1
+		std::cout << "Your turn\n";
+	}
+
+	// Check ship status
+	unsigned i = 0;
+	while (i < this->get_enemy_map().get_ships().size())
+	{
+		if (this->get_enemy_map().get_ships()[i]->get_hp() == 0)
+		{
+			if (!this->get_enemy_map().get_ships()[i]->get_ship_cells()[0]->visible())
+			{
+				for (int j = 0; j < this->get_enemy_map().get_ships()[i]->get_ship_cells().size(); j++) // Reveal the ship on the map after it has been sunk
+					this->get_enemy_map().get_ships()[i]->get_ship_cells()[j]->set_texture(this->get_enemy_map().get_ships()[i]->get_ship_cells()[j]->get_texture(), this->get_enemy_map().get_ships()[i]->get_type(), true);
+			}
+
+			delete this->get_enemy_map().get_ships()[i];
+			this->get_enemy_map().get_ships().erase(this->get_enemy_map().get_ships().begin() + i);
+		}
+		else
+			i++;
+	}
+	i = 0;
+	while (i < this->get_player_map().get_ships().size())
+	{
+		if (this->get_player_map().get_ships()[i]->get_hp() == 0) // ship has been sunk
+		{
+			delete this->get_player_map().get_ships()[i];
+			this->get_player_map().get_ships().erase(this->get_player_map().get_ships().begin() + i);
+		}
+		else
+			i++;
+	}
+	// Check victory status
+	if (this->multiplayer_.get_host() || this->multiplayer_.game_over())
+	{
+		if (this->get_enemy_map().get_ships().empty())
+		{
+			this->set_state(3);
+			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
+			this->victory_text_.setString("Victory");
+			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
+			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
+			this->victory_text_.setFillColor(sf::Color(255, 157, 25));
+			this->victory_text_.setOutlineColor(sf::Color::Black);
+
+			if (this->multiplayer_.get_host())
+				this->multiplayer_.send_data("$GL");
+		}
+		else if (this->get_player_map().get_ships().empty())
+		{
+			this->set_state(3);
+			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
+			this->victory_text_.setString("Defeat");
+			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
+				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
+			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
+			this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
+
+			if (this->multiplayer_.get_host())
+				this->multiplayer_.send_data("$GW");
+		}
+	}
+	
+
+	// Get current mouse_pos to the window & convert to coordinates
+	sf::Vector2f world_pos = this->window_->mapPixelToCoords(sf::Mouse::getPosition(*this->window_));
+
+	// Draw background and the maps
+	this->image_boxes_.at(0)->draw(*this->window_);
+	this->player_map_.draw(*this->window_);
+	this->enemy_map_.draw(*this->window_);
+
+	// Draw ImageTextBox
+	this->image_boxes_.at(3)->draw(*this->window_);
+	this->image_boxes_.at(4)->draw(*this->window_);
+	this->image_boxes_.at(5)->draw(*this->window_);
+
+	// Draw buttons
+	if (this->turn_)
+	{
+		this->tex_buttons_.at(4).draw(*this->window_);
+		this->tex_buttons_.at(4).update(world_pos, *this->window_);
+	}
+	this->tex_buttons_.at(5).draw(*this->window_);
+	this->tex_buttons_.at(5).update(world_pos, *this->window_);
+
+	// Draw grids
+	this->get_player_map().draw_grid_marks(*this->window_);
+	this->get_enemy_map().draw_grid_marks(*this->window_);
+
+	// Draw statistics
+	this->statistics_.draw(*this->window_, world_pos);
+
+	// Draw popupbox if it is triggered
+	if (this->popup_seen_ == false)
+	{
+		this->popup_boxes_[2]->set_state(1);
+		this->popup_seen_ = true;
+	}
+	if (this->popup_boxes_[2]->get_state() == 1)
+	{
+		this->popup_boxes_[2]->draw(*this->window_);
+		this->popup_boxes_[2]->update(*this->window_, world_pos);
+	}
+
+	// Draw chatbox
+	this->chatbox_->update(*this->window_, world_pos);
+	this->chatbox_->draw(*this->window_);
+
+	// Check if player is readying to attack
+	if (this->holding_figurine())
+	{
+		this->held_figurine_->drag(world_pos);
+		this->held_figurine_->draw(*this->window_);
+	}
 }
 
 Map& Game::get_player_map()
@@ -614,6 +880,7 @@ const unsigned& Game::get_state() const
 void Game::set_state(unsigned state)
 {
 	this->state_ = state;
+	this->disable_buttons();
 }
 
 void Game::randomize_ships(bool players_ships)
@@ -675,7 +942,12 @@ void Game::randomize_ships(bool players_ships)
 			x--;
 
 		if (players_ships)
+		{
 			this->player_map_.add_ship(x, y, rotation, ship_names[i], this->texturemanager_.get_ship_texture(ship_names[i]), players_ships);
+			this->downloaded_ships_.ship_placements.push_back(sf::Vector2u(x, y));
+			this->downloaded_ships_.ship_rotations.push_back(rotation);
+			this->downloaded_ships_.ship_types.push_back(ship_names[i]);
+		}
 		else
 		{
 			this->enemy_map_.add_ship(x, y, rotation, ship_names[i], this->texturemanager_.get_ship_texture(ship_names[i]), false); // debug, set to true to see enemy ships
@@ -744,8 +1016,13 @@ void Game::process_click(const sf::Vector2f& mouse_pos)
 void Game::release_figurine(const sf::Vector2f& mouse_pos)
 {
 	int const rotation = static_cast<int>(this->held_figurine_->get_abs_angle());
-	if (this->held_figurine_->release(this->get_player_map(), mouse_pos, rotation))
+	sf::Vector2u ship_pos;
+	std::string type = this->held_figurine_->get_type();
+	if (this->held_figurine_->release(this->get_player_map(), mouse_pos, rotation, ship_pos))
 	{
+		this->downloaded_ships_.ship_types.push_back(type);
+		this->downloaded_ships_.ship_placements.push_back(ship_pos);
+		this->downloaded_ships_.ship_rotations.push_back(rotation);
 		this->remove_figurine(this->held_figurine_->get_type());
 	}
 	this->held_figurine_ = nullptr;
@@ -807,21 +1084,28 @@ void Game::add_discarded_figurines()
 
 void Game::ready_attack()
 {
-	this->held_figurine_ = this->figurine_peg_;
+	if (this->state_ == 2)
+	{
+		this->held_figurine_ = this->figurine_peg_;
+	}
+	else
+	{
+		if (this->turn_)
+			this->held_figurine_ = this->figurine_peg_;
+	}
+	
 }
 
-bool Game::process_hit(sf::Vector2f& mouse_pos, bool player, sf::Vector2i& attack_pos, bool& hit)
+bool Game::process_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos, bool& hit)
 {
  	std::string target_hit;
-	if (player)
-		target_hit = this->get_player_map().check_hit(mouse_pos, attack_pos);
-	else // not used, maybe with IP multiplayer
-		target_hit = this->get_enemy_map().check_hit(mouse_pos, attack_pos);
+	target_hit = this->get_enemy_map().check_hit(mouse_pos, attack_pos);
 	std::cout << "Player has hit " << target_hit << std::endl;
 	if (target_hit == "Outside" || target_hit == "Filled")
 		return false;
 	if (target_hit != "Empty")
 	{
+		// send hit data to other player
 		hit = true;
 		this->player_stats_.hits++;
 	}
@@ -829,9 +1113,23 @@ bool Game::process_hit(sf::Vector2f& mouse_pos, bool player, sf::Vector2i& attac
 		this->player_stats_.misses++;
 	this->player_stats_.total++;
  	this->player_stats_.hit_rate = (static_cast<double>(this->player_stats_.hits) / this->player_stats_.total) * 100;
-	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round());
-	//std::cout << this->enemy_map_ << std::endl; debug
 	return true;
+}
+
+void Game::process_multiplayer_hit(Hit& hit)
+{
+	// HMT stats
+	this->statistics_.add_entry(hit.hit, hit.hit_ship, false);
+	if (hit.hit_ship)
+		this->enemy_stats_.hits++;
+	else
+		this->enemy_stats_.misses++;
+	this->enemy_stats_.total++;
+	this->enemy_stats_.hit_rate = (static_cast<double>(this->enemy_stats_.hits) / this->enemy_stats_.total) * 100;
+
+	this->player_map_.check_hit(hit.hit);
+
+
 }
 
 void Game::process_ai_hit(sf::Vector2i& attack_pos, bool& hit)
@@ -850,6 +1148,7 @@ void Game::process_ai_hit(sf::Vector2i& attack_pos, bool& hit)
 	else
 		random_ai_attack(attack_pos, hit);
 }
+
 
 void Game::random_ai_attack(sf::Vector2i& attack_pos, bool& hit)
 {
@@ -1107,12 +1406,34 @@ void Game::disable_buttons()
 	{
 		for (int i = 0; i < 3; i++) {									// Disable menu buttons
 			this->buttons_[i].set_state(3);
+
 		}
 		for (int i = 6; i < 8; i++)										// Enable multiplayer setup buttons
 			this->tex_buttons_[i].set_state(0);
 	}
-	for (int i = 0; i < this->buttons_.size(); i++)
+	else if (this->state_ == 5)
+	{
+		for (int i = 6; i < 8; i++)										// Disable multiplayer setup buttons
+			this->tex_buttons_[i].set_state(3);
+		for (int i = 0; i < 3; i++)										// Enable ship select menu buttons 4
+			this->tex_buttons_[i].set_state(0);
+		this->tex_buttons_[8].set_state(0);
+	}
+	else if (this->state_ == 6)
+	{
+		for (int i = 0; i < 3; i++)										// Disable menu buttons
+			this->buttons_[i].set_state(3);
+		for (int i = 0; i < 3; i++)										// Disable ship select menu buttons 4
+			this->tex_buttons_[i].set_state(3);
+		this->tex_buttons_[8].set_state(3);
+		for (int i = 5; i < 6; i++)										// Enable SP buttons 2
+			this->tex_buttons_[i].set_state(0);
+	}
+	/*
+	 *for (int i = 0; i < this->buttons_.size(); i++)
 		this->buttons_[i].set_state(3);
+	 */
+	
 }
 
 InputBox* Game::get_inputbox()
@@ -1153,6 +1474,17 @@ void Game::check_popup_boxes_exit()
 			this->popup_boxes_[i]->release_button();
 	}
 }
+
+bool Game::get_turn()
+{
+	return this->turn_;
+}
+
+void Game::set_turn(bool b)
+{
+	this->turn_ = b;
+}
+
 void Game::process_popup_box(sf::Vector2f& mouse_pos)
 {
 	for (int i = 0; i < this->popup_boxes_.size(); i++)
@@ -1162,3 +1494,9 @@ void Game::process_popup_box(sf::Vector2f& mouse_pos)
 	}
 }
 
+void Game::send_attack_data(sf::Vector2i& player_attack_pos, bool successful_player_attack)
+{
+	sf::Packet packet;
+	packet << "$T" << player_attack_pos.x << player_attack_pos.y << successful_player_attack;
+	this->multiplayer_.send_data(packet);
+}

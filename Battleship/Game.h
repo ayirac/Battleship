@@ -19,6 +19,7 @@
 #include "PopupBox.h"
 
 
+
 class Game {
 private:
 	Map player_map_;
@@ -57,8 +58,11 @@ private:
 	std::vector<Animation> animations_;
 	std::vector<sf::Sprite> animated_sprites_;
 	std::vector<PopupBox*> popup_boxes_;
+	DownloadedShips downloaded_ships_;
 	bool popup_seen_;
-	bool multiplayer_ready_;
+	bool loading_;
+	bool turn_;
+	bool start_;
 
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow
@@ -77,6 +81,7 @@ public:
 	void multiplayer_setup();
 	// A screen that allows players to select their ships and ready up for a game. state_ = 5
 	void multiplayer_ship_menu();
+	void process_multiplayer_hit(Hit& hit);
 	// A screen that allows the user to play against an enemy player in multiplayer. Called when state_ = 6
 	void multiplayer_game_start();
 	// Returns the player_map_
@@ -111,7 +116,7 @@ public:
 	//
 	void ready_attack();
 	// Process the hit. Return false if outside the map, else true.
-	bool process_hit(sf::Vector2f& mouse_pos, bool player, sf::Vector2i& attack_pos, bool& hit);
+	bool process_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos, bool& hit);
 	// Process the AI's hit
 	void process_ai_hit(sf::Vector2i& attack_pos, bool& hit);
 	// RNG Algorithm for AI
@@ -139,5 +144,14 @@ public:
 	void set_chatbox_state(unsigned state);
 	void process_popup_box(sf::Vector2f& mouse_pos);
 	void check_popup_boxes_exit();
+	bool get_turn();
+	void set_turn(bool b);
+	void send_attack_data(sf::Vector2i& player_attack_pos, bool successful_player_attack);
+	void update_round();
 };
+
+inline void Game::update_round()
+{
+	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round());
+}
 #endif

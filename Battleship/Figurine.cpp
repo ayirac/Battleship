@@ -74,9 +74,9 @@ void Figurine::reset()
 	this->sprite_.setRotation(270);
 }
 
-bool Figurine::release(Map& map, const sf::Vector2f& mouse_pos, unsigned rotation)
+bool Figurine::release(Map& map, const sf::Vector2f& mouse_pos, unsigned rotation, sf::Vector2u& ship_pos)
 {
-	if (!map.check_placement(mouse_pos, this->type_, this->ship_textures_, rotation))
+	if (!map.check_placement(mouse_pos, this->type_, this->ship_textures_, rotation, ship_pos))
 	{
 		this->reset_position();
 		return false;

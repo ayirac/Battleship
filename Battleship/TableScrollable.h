@@ -16,6 +16,8 @@ private:
 	unsigned current_row_;
 	int front_row_;
 	int bottom_row_;
+	bool player_added_;
+	bool enemy_added_;
 	std::vector<ButtonTexture> buttons_; // 0 for scroll up, 1 for scroll down
 	std::vector<ImageBox> image_boxes_;
 	Button* held_button_;
@@ -29,6 +31,8 @@ public:
 	void draw(sf::RenderWindow& win, sf::Vector2f& mouse_pos);
 	// add an entry to the Hits table
 	void add_entry(sf::Vector2i player_hit, sf::Vector2i enemy_hit, bool& successful_player_attack, bool& successful_enemy_attack);
+	// add an entry to the Hits table multi
+	void add_entry(sf::Vector2i hit, bool& successful_attack, bool playe);
 	void process_click(sf::Vector2f& mouse_pos);
 	bool holding_button();
 	void shift_down();

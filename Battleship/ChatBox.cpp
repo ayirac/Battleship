@@ -169,7 +169,8 @@ void ChatBox::shift_up()
 void ChatBox::enter_key_pressed()
 {
 	ChatMessage c{ "Player", this->textfield_entry_, sf::Color(54, 148, 244) };
-	this->multiplayer_->send_data(this->textfield_entry_);
+	std::string message = "$M" + this->textfield_entry_;
+	this->multiplayer_->send_data(message);
 	this->add_entry(c);
 	this->textfield_entry_.clear();
 	this->textfield_text_.setString("");

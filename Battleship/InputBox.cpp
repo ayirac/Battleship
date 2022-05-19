@@ -27,9 +27,10 @@ InputBox::InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, uns
 }
 
 InputBox::InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& instructions, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer,
-                   sf::Sprite* loading_sprite, unsigned max_textfield_entry) : Box(size, pos), textures_(textures), header_text_(instructions, font, char_size), textfield_text_("192.168.254.22", font, char_size), edit_mode_(false), cursor_active_(true),
-	text_cursor_(sf::Vector2f(4, char_size)), animate_cursor_thread_(nullptr), held_button_(nullptr), multiplayer_(multiplayer),
-	loading_sprite_(loading_sprite), original_header_(instructions), MAX_TEXTFIELD_ENTRY(max_textfield_entry),original_textfield_color_(sf::Color(151, 117, 86)), font_(&font)
+                   sf::Sprite* loading_sprite, unsigned max_textfield_entry) : Box(size, pos), textures_(textures), header_text_(instructions, font, char_size), textfield_text_("192.168.254.22", 
+					   font, char_size), edit_mode_(false), cursor_active_(true), text_cursor_(sf::Vector2f(4, char_size)), animate_cursor_thread_(nullptr), held_button_(nullptr), multiplayer_(multiplayer),
+	loading_sprite_(loading_sprite), original_header_(instructions), MAX_TEXTFIELD_ENTRY(max_textfield_entry),original_textfield_color_(sf::Color(151, 117, 86)), font_(&font), textfield_entry_("192.168.254.22"),
+	char_size_(char_size)
 {
 	this->shape_.setFillColor(sf::Color(145, 109, 74)); 
 	this->shape_.setOutlineColor(sf::Color(115, 86, 59));

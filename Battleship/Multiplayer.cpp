@@ -5,7 +5,16 @@
 #include <SFML/Network/TcpListener.hpp>
 
 Multiplayer::Multiplayer() : port_(55001), hosting_finished_(false), connecting_finished_(false), host_thread_(nullptr), connecting_thread_(nullptr), listening_thread_(nullptr), connected_(false),
-	new_data_(false), host_(false) {}
+	new_data_(false), host_(false), player_ready_(false), enemy_ready_(false), connected_init_(false), downloaded_map_(false), game_over_(false), victory_(false), new_attack_(false)
+{
+	for (int i = 0; i < 5; i++ )
+	{
+		this->downloaded_ships_.ship_types.push_back("");
+		this->downloaded_ships_.ship_placements.push_back(sf::Vector2u());
+		this->downloaded_ships_.ship_rotations.push_back(0);
+	}
+	
+}
 
 void Multiplayer::connect(sf::IpAddress ip)
 {
@@ -20,7 +29,13 @@ void Multiplayer::thread_connect(sf::IpAddress ip)
 		sf::Socket::Status status = this->connect_socket_.connect(ip, this->port_, sf::milliseconds(5000));
 		if (status == sf::Socket::Done)
 		{
+			// Send validation packet
+			sf::Packet packet;
+			packet << true;
+			this->connect_socket_.send(packet);
+
 			std::cout << "You've connected to " << this->connect_socket_.getRemoteAddress().toString() << std::endl;
+			this->connected_init_ = true;
 			this->connected_ = true;
 			this->listening_thread_ = new std::thread(&Multiplayer::thread_look, this);
 		}
@@ -45,18 +60,46 @@ void Multiplayer::thread_look()
 			this->new_chat_message_ = new ChatMessage{ "Enemy", "", sf::Color() };
 			packet >> this->new_chat_message_->message;
 			this->new_chat_message_->color = sf::Color(255, 0, 0);
-			// Data type codes - $M - Message, $R - Ready, $A - Attack Info
-			if (this->new_chat_message_->message.find("$M"))
+			// Data type codes - $M - Message, $R - Ready, $S - New stage, $T - Attack Info & Turn, $P - New enemy map update
+			if (this->new_chat_message_->message.find("$M") != std::string::npos)
 			{
+				this->new_chat_message_->message.erase(this->new_chat_message_->message.begin(), this->new_chat_message_->message.begin() + 2);
 				this->new_data_ = true;
 			}
-			else if (this->new_chat_message_->message.find("$R"))
+			else if (this->new_chat_message_->message.find("$R") != std::string::npos)
 			{
-				// get ready // CONT HERE
+				this->toggle_ready(false);
 			}
-			else if (this->new_chat_message_->message.find("$A"))
+			else if (this->new_chat_message_->message.find("$S") != std::string::npos)
 			{
-				// get attack info
+				this->next_stage_ = true;
+			}
+			else if (this->new_chat_message_->message.find("$P") != std::string::npos)
+			{
+				for (int i = 0; i < 5; i ++)
+				{
+					packet >> this->downloaded_ships_.ship_types[i] >> this->downloaded_ships_.ship_placements[i].x >> this->downloaded_ships_.ship_placements[i].y >> this->downloaded_ships_.ship_rotations[i];
+				}
+
+				this->downloaded_map_ = true;
+			}
+			else if (this->new_chat_message_->message.find("$F") != std::string::npos)
+			{
+				this->turn_ = true;
+			}
+			else if (this->new_chat_message_->message.find("$T") != std::string::npos)
+			{
+				packet >> this->enemy_hit_.hit.x >> this->enemy_hit_.hit.y >> this->enemy_hit_.hit_ship;
+				this->turn_ = true;
+				this->new_attack_ = true;
+			}
+			else if (this->new_chat_message_->message.find("$G") != std::string::npos)
+			{
+				if (this->new_chat_message_->message.find('W', 2) != std::string::npos)
+					this->victory_ = true;
+				else
+					this->victory_ = false;
+				this->game_over_ = true;
 			}
 
 			std::cout << "Received " << packet.getDataSize() << " bytes\t" << "Message: " << this->new_chat_message_->message << std::endl;
@@ -76,17 +119,25 @@ void Multiplayer::host()
 void Multiplayer::thread_host()
 {
 	this->listener_socket_.listen(this->port_);
-
+	bool client = false;
 	// Endless loop that waits for new connections
-	if (this->listener_socket_.accept(this->connect_socket_) == sf::Socket::Done)
+	do
 	{
-		std::cout << "New connection received from " << this->connect_socket_.getRemoteAddress() << std::endl;
-		this->connected_ = true;
-		this->host_ = true;
-		this->listening_thread_ = new std::thread(&Multiplayer::thread_look, this);
+		if (this->listener_socket_.accept(this->connect_socket_) == sf::Socket::Done)
+		{
+			// Check to see if the connection is from a valid client
+			sf::Packet packet;
+			if (this->connect_socket_.receive(packet) == sf::Socket::Done)
+				packet >> client;
+		}
 	}
-	else
-		std::cout << "Connection failed.\n";
+	while (!client);
+
+	std::cout << "New connection received from " << this->connect_socket_.getRemoteAddress() << std::endl;
+	this->connected_init_ = true;
+	this->connected_ = true;
+	this->host_ = true;
+	this->listening_thread_ = new std::thread(&Multiplayer::thread_look, this);
 	this->hosting_finished_ = true;
 }
 
@@ -131,10 +182,15 @@ sf::TcpSocket& Multiplayer::get_connect_socket_()
 	return this->connect_socket_;
 }
 
-void Multiplayer::send_data(std::string& message)
+void Multiplayer::send_data(std::string message)
 {
 	sf::Packet packet;
 	packet << message;
+	this->connect_socket_.send(packet);
+}
+
+void Multiplayer::send_data(sf::Packet& packet)
+{
 	this->connect_socket_.send(packet);
 }
 
@@ -169,4 +225,86 @@ bool Multiplayer::get_host()
 {
 	return this->host_;
 }
+
+bool Multiplayer::ready(bool player)
+{
+	if (player)
+		return this->player_ready_;
+	return this->enemy_ready_;
+}
+
+void Multiplayer::toggle_ready(bool player)
+{
+	if (player)
+	{
+		if (this->player_ready_ == true)
+			this->player_ready_ = false;
+		else
+			this->player_ready_ = true;
+	}
+	else
+	{
+		if (this->enemy_ready_ == true)
+			this->enemy_ready_ = false;
+		else
+			this->enemy_ready_ = true;
+	}
+}
+bool Multiplayer::connected_init()
+{
+	return this->connected_init_;
+}
+
+void Multiplayer::disable_connected_init()
+{
+	this->connected_init_ = false;
+}
+
+bool Multiplayer::next_stage()
+{
+	return this->next_stage_;
+}
+
+bool Multiplayer::downloaded_map()
+{
+	bool temp = this->downloaded_map_;
+	this->downloaded_map_ = false;
+	return temp;
+}
+
+bool Multiplayer::get_turn()
+{
+	bool temp = this->turn_;
+	if (this->turn_)
+		this->turn_ = false;
+
+	return temp;
+}
+
+bool Multiplayer::get_new_attack()
+{
+	bool temp = this->new_attack_;
+	if (this->new_attack_)
+		this->new_attack_ = false;
+	else
+		this->new_attack_ = true;
+
+	return temp;
+}
+
+DownloadedShips& Multiplayer::download_ships()
+{
+	return this->downloaded_ships_;
+}
+
+bool& Multiplayer::game_over()
+{
+	return this->game_over_;
+}
+
+Hit& Multiplayer::get_hit()
+{
+	return this->enemy_hit_;
+}
+
 

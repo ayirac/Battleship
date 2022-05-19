@@ -3,8 +3,8 @@
 #include <SFML/Graphics/Text.hpp>
 #include "Box.h"
 #include "ButtonTexture.h"
-#include <thread>
 #include "Multiplayer.h"
+#include <thread>
 
 class InputBox : public Box
 {
