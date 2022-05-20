@@ -112,7 +112,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->IP_input_box_ = new InputBox(input_size, input_pos, input_header, 35, input_textures, this->fonts_[0], &this->multiplayer_, this->get_sprite(0), 30);
 
 	// Chatbox
-	sf::Vector2f chatbox_size(this->window_->getSize().x / 3.6, this->window_->getSize().y / 5.2), chatbox_pos(this->window_->getSize().x / 140 , this->window_->getSize().y / 1.25);
+	sf::Vector2f chatbox_size(this->window_->getSize().x / 3.6, this->window_->getSize().y / 5.2), chatbox_pos(this->window_->getSize().x / 155 , this->window_->getSize().y / 1.25);
 	std::string chatbox_header("Chatbox");
 	std::vector<sf::Texture*> chatbox_textures;
 	chatbox_textures.push_back(this->texturemanager_.get_texture(21));
@@ -216,6 +216,10 @@ void Game::release_button()
 	}
 	else if (btn_text == "Surrender")					
 	{
+		if (this->get_multiplayer().connected())
+			this->get_multiplayer().send_data("$Q");
+
+		this->player_map_.destroy_ships();
 		this->set_state(3);
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Defeat");
@@ -240,9 +244,9 @@ void Game::release_button()
 	}
 	else if (btn_text == "Join Game")							
 	{
-		this->IP_input_box_->set_state(1);
 		if (this->multiplayer_.hosting())
-			this->multiplayer_.stop_hosting();  
+			this->multiplayer_.stop_hosting();
+		this->IP_input_box_->set_state(1);
 		
 	}
 	else if (btn_text == "Ready Up")
@@ -713,6 +717,9 @@ void Game::multiplayer_game_start()
 				i++;
 		}
 
+		// Victory status check
+		if (this->multiplayer_.enemy_surrender())
+			this->get_enemy_map().destroy_ships();
 		if (this->get_enemy_map().get_ships().empty())
 		{
 			this->set_state(3);
@@ -1018,7 +1025,8 @@ void Game::release_figurine(const sf::Vector2f& mouse_pos)
 	int const rotation = static_cast<int>(this->held_figurine_->get_abs_angle());
 	sf::Vector2u ship_pos;
 	std::string type = this->held_figurine_->get_type();
-	if (this->held_figurine_->release(this->get_player_map(), mouse_pos, rotation, ship_pos))
+	sf::FloatRect bounds = this->held_figurine_->get_global_bounds();
+	if (this->held_figurine_->release(this->get_player_map(), bounds, rotation, ship_pos))
 	{
 		this->downloaded_ships_.ship_types.push_back(type);
 		this->downloaded_ships_.ship_placements.push_back(ship_pos);

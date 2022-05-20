@@ -74,9 +74,9 @@ void Figurine::reset()
 	this->sprite_.setRotation(270);
 }
 
-bool Figurine::release(Map& map, const sf::Vector2f& mouse_pos, unsigned rotation, sf::Vector2u& ship_pos)
+bool Figurine::release(Map& map, sf::FloatRect& bounds, unsigned rotation, sf::Vector2u& ship_pos)
 {
-	if (!map.check_placement(mouse_pos, this->type_, this->ship_textures_, rotation, ship_pos))
+	if (!map.check_placement(bounds, this->type_, this->ship_textures_, rotation, ship_pos))
 	{
 		this->reset_position();
 		return false;
@@ -119,4 +119,9 @@ float Figurine::get_abs_angle() const
 void Figurine::reset_position()
 {
 	this->sprite_.setPosition(this->original_pos_.x, this->original_pos_.y);
+}
+
+sf::FloatRect Figurine::get_global_bounds()
+{
+	return this->sprite_.getGlobalBounds();
 }

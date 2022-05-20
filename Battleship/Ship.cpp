@@ -86,3 +86,8 @@ void Ship::remove_hp()
 {
 	this->HP_--;
 }
+
+void Ship::destroy()
+{
+	this->HP_ = 0;
+}

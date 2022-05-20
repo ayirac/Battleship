@@ -8,7 +8,7 @@ using namespace sf;
 int main()
 {
     srand(time(NULL));
-    sf::RenderWindow window(sf::VideoMode(1500, 1250), "Battleship");
+    sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width * 0.586, sf::VideoMode::getDesktopMode().height * 0.868), "Battleship");
     window.setVerticalSyncEnabled(true);
     Game battleship(&window);
 

@@ -83,7 +83,7 @@ void Map::add_ship(unsigned& x, unsigned& y, unsigned& rotation, std::string& ty
 	{
 		for (unsigned i = 0; i < ship_textures.size(); i++)
 		{
-			unsigned new_x = (x + ship_textures.size()) - i;
+			unsigned new_x = (x + ship_textures.size()) - i - 1;
 			this->cells_[new_x][y].set_texture(p_ship->get_next_texture(), p_ship->get_type(), change);
 			this->cells_[new_x][y].abs_rotate(rotation);
 			p_ship_cell = &this->cells_[new_x][y];
@@ -94,9 +94,8 @@ void Map::add_ship(unsigned& x, unsigned& y, unsigned& rotation, std::string& ty
 	{
 		for (unsigned i = 0; i < ship_textures.size(); i++)
 		{
-			unsigned new_y = (y + ship_textures.size()) - i;
-			if (y == 0)
-				new_y--;
+			unsigned new_y = (y + ship_textures.size()) - i - 1;
+
 			this->cells_[x][new_y].set_texture(p_ship->get_next_texture(), p_ship->get_type(), change);
 			this->cells_[x][new_y].abs_rotate(rotation);
 			p_ship_cell = &this->cells_[x][new_y];
@@ -151,19 +150,35 @@ bool Map::check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::strin
 	return ship_found;
 }
 
-bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vector<sf::Texture*> ship_textures, unsigned& rotation, sf::Vector2u& ship_pos)
+bool Map::check_placement(sf::FloatRect& bounds, std::string& type, std::vector<sf::Texture*> ship_textures, unsigned& rotation, sf::Vector2u& ship_pos)
 {
+	float x_offset;
+	if (type == "Carrier")
+		x_offset = 9;
+	else if (type == "Battleship")
+		x_offset = 8;
+	else if (type == "Submarine" || type == "Cruiser")
+		x_offset = 6;
+	else
+		x_offset = 4;
+
+	sf::Vector2f center_first_cell;
+	if (rotation == 90 || rotation == 270)
+		center_first_cell = sf::Vector2f(bounds.left + bounds.width / x_offset, bounds.top + bounds.height / 2);
+	else if (rotation == 0 || rotation == 180)
+		center_first_cell = sf::Vector2f(bounds.left + bounds.width / 2, bounds.top + bounds.height / x_offset); //775, 763
+
 	for (unsigned i = 0; i < this->cells_.size(); i++)
 	{
 		for (unsigned j = 0; j < this->cells_.size(); j++)
 		{
-			if (this->cells_[i][j].contains(pos))
+			if (this->cells_[i][j].contains(center_first_cell))
 			{
 
-				if (rotation == 0 || rotation == 180) // vertical
+				if (rotation == 0 || rotation == 180) // vertical  cont here
 				{
-					if (j != 1)
-						j = j - static_cast<unsigned>(ship_textures.size()) / 2;
+					//if (j != 1)
+						//j = j - static_cast<unsigned>(ship_textures.size()) / 2;
 					if (j + ship_textures.size() > 10 || j + ship_textures.size() < ship_textures.size())
 					{
 						std::cout << "OVERFLOW!\n";
@@ -172,8 +187,8 @@ bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vecto
 				}
 				else if (rotation == 90 || rotation == 270) // horizontal
 				{
-					if (i != 1)
-						i = i - static_cast<unsigned>(ship_textures.size()) / 2;
+					//if (i != 1)
+						//i = i - static_cast<unsigned>(ship_textures.size()) / 2;
 					if (i + ship_textures.size() > 10 || i + ship_textures.size() < ship_textures.size())
 					{
 						std::cout << "OVERFLOW!\n";
@@ -181,11 +196,6 @@ bool Map::check_placement(const sf::Vector2f& pos, std::string& type, std::vecto
 					}
 				}
 
-				// correction to ensure the ship is placed starting at cursor
-				if (rotation == 180 && j != 0)
-					j--;
-				else if (rotation == 90 && i != 0)
-					i--;
 				if (!this->check_overlap(i, j, rotation, type))
 				{
 					this->add_ship(i, j, rotation, type, ship_textures, true);
@@ -388,6 +398,14 @@ sf::Vector2f& Map::get_left()
 unsigned Map::get_cell_size()
 {
 	return this->cell_size_;
+}
+
+void Map::destroy_ships()
+{
+	for (int i = 0; i < this->ships_.size(); i++)
+	{
+		this->ships_[i]->destroy();
+	}
 }
 
 

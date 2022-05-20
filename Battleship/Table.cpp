@@ -11,7 +11,7 @@ Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font
 	this->outline_shape_.setPosition(pos);
 	this->outline_shape_.setOutlineThickness(3);
 	this->outline_shape_.setFillColor(sf::Color(145, 109, 74));
-	this->outline_shape_.setOutlineColor(sf::Color(115, 86, 59));
+	this->outline_shape_.setOutlineColor(sf::Color(115, 86, 59)); // this->shape_.setFillColor(sf::Color(145, 109, 74));
 	// Setup Header/horizontal lines
 	sf::RectangleShape header(sf::Vector2f(this->outline_shape_.getGlobalBounds().width, 3));
 	sf::RectangleShape column(sf::Vector2f(this->outline_shape_.getGlobalBounds().height, 3));

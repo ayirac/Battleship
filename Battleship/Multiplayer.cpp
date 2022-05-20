@@ -5,7 +5,7 @@
 #include <SFML/Network/TcpListener.hpp>
 
 Multiplayer::Multiplayer() : port_(55001), hosting_finished_(false), connecting_finished_(false), host_thread_(nullptr), connecting_thread_(nullptr), listening_thread_(nullptr), connected_(false),
-	new_data_(false), host_(false), player_ready_(false), enemy_ready_(false), connected_init_(false), downloaded_map_(false), game_over_(false), victory_(false), new_attack_(false)
+	new_data_(false), host_(false), player_ready_(false), enemy_ready_(false), connected_init_(false), downloaded_map_(false), game_over_(false), victory_(false), new_attack_(false), stopped_host_(false)
 {
 	for (int i = 0; i < 5; i++ )
 	{
@@ -101,6 +101,10 @@ void Multiplayer::thread_look()
 					this->victory_ = false;
 				this->game_over_ = true;
 			}
+			else if (this->new_chat_message_->message.find("$Q") != std::string::npos)
+			{
+				this->enemy_surrender_ = true;
+			}
 
 			std::cout << "Received " << packet.getDataSize() << " bytes\t" << "Message: " << this->new_chat_message_->message << std::endl;
 		}
@@ -110,6 +114,8 @@ void Multiplayer::thread_look()
 
 void Multiplayer::host()
 {
+	this->stopped_host_ = false;
+	this->hosting_finished_ = false;
 	sf::IpAddress address(sf::IpAddress::getLocalAddress());
 	std::cout << "Checking for connection on " << address.toString() << std::endl;
 	if (this->host_thread_ == nullptr)
@@ -131,8 +137,10 @@ void Multiplayer::thread_host()
 				packet >> client;
 		}
 	}
-	while (!client);
+	while (!client && !this->stopped_host_);
 
+	if (this->stopped_host_)
+		return;
 	std::cout << "New connection received from " << this->connect_socket_.getRemoteAddress() << std::endl;
 	this->connected_init_ = true;
 	this->connected_ = true;
@@ -213,11 +221,11 @@ void Multiplayer::stop_hosting()
 {
 	if (this->hosting())
 	{
+		this->stopped_host_ = true;
 		this->listener_socket_.close();
 		this->host_thread_->join();
 		delete this->host_thread_;
 		this->host_thread_ = nullptr;
-		this->hosting_finished_ = false;
 	}
 }
 
@@ -305,6 +313,11 @@ bool& Multiplayer::game_over()
 Hit& Multiplayer::get_hit()
 {
 	return this->enemy_hit_;
+}
+
+bool& Multiplayer::enemy_surrender()
+{
+	return this->enemy_surrender_;
 }
 
 

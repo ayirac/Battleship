@@ -31,7 +31,7 @@ public:
 	// Checks if given an x, y, rotation, and the HP of a ship if the ship overlaps an existing ship, returns true if found
 	bool check_overlap(unsigned& x, unsigned& y, unsigned& rotation, std::string& type);
 	// When a figurine is released this function checks to see if the figurine lands inside the grid and doesn't overflow
-	bool check_placement(const sf::Vector2f& pos, std::string& type, std::vector<sf::Texture*> ship_texture, unsigned& rotation, sf::Vector2u& ship_pos);
+	bool check_placement(sf::FloatRect& bounds, std::string& type, std::vector<sf::Texture*> ship_texture, unsigned& rotation, sf::Vector2u& ship_pos);
 	// Remove a ship from the map given its type
 	bool remove_ship(std::string& type);
 	// Remove all ships from the map
@@ -58,6 +58,7 @@ public:
 	void reset_map();
 	sf::Vector2f& get_left();
 	unsigned get_cell_size();
+	void destroy_ships();
 };
 
 
