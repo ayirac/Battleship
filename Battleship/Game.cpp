@@ -663,7 +663,7 @@ void Game::multiplayer_ship_menu()
 			std::cout << "Adding " << this->downloaded_ships_.ship_types[i] << " AT " << this->downloaded_ships_.ship_placements[i].x << ", " << this->downloaded_ships_.ship_placements[i].y
 				<< " rot: " << this->downloaded_ships_.ship_rotations[i] << std::endl;
 			this->enemy_map_.add_ship(this->downloaded_ships_.ship_placements[i].x, this->downloaded_ships_.ship_placements[i].y, this->downloaded_ships_.ship_rotations[i],
-				this->downloaded_ships_.ship_types[i], this->texturemanager_.get_ship_texture(this->downloaded_ships_.ship_types[i]), true);
+				this->downloaded_ships_.ship_types[i], this->texturemanager_.get_ship_texture(this->downloaded_ships_.ship_types[i]), false);
 		}
 		this->set_state(6);
 	}
