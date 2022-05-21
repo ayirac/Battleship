@@ -52,66 +52,65 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(400, 120), 120 / 3, this->fonts_[0], 2);
 
 	// Make background/title
+	std::cout << this->window_->getSize().y / 24.8 << " x " << this->window_->getSize().x / 25 << std::endl;
 	float window_x = static_cast<float>(this->window_->getSize().x), window_y = static_cast<float>(this->window_->getSize().y);
 	ImageBox* p_imagebox;
 	p_imagebox = new ImageBox(this->texturemanager_.get_texture(0), sf::Vector2f(window_x, window_y));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(250, 50), sf::Vector2f((window_x - this->window_->getSize().x / 6) / 2, 
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(this->window_->getSize().x / 6, this->window_->getSize().y / 24.98), sf::Vector2f((window_x - this->window_->getSize().x / 6) / 2,
 		(window_y - this->window_->getSize().y / 25) / 20));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(400, 100), sf::Vector2f((window_x - this->window_->getSize().x / 3.75) / 2, 
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(this->window_->getSize().y / 3.75, this->window_->getSize().y / 12.49), sf::Vector2f((window_x - this->window_->getSize().x / 3.75) / 2,
 		(window_y - this->window_->getSize().y / 12.5)));
 	this->image_boxes_.push_back(p_imagebox);
 
 	// Create Round, PLayer, Enemy ImageTextBox
-	std::cout << this->window_->getSize().x/9.68 << " x " << this->window_->getSize().y/19.215 << std::endl;
 	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(14), sf::Vector2f(this->window_->getSize().x / 5, this->window_->getSize().y / 15), 
 		sf::Vector2f((window_x - this->window_->getSize().x/5) / 22, (window_y - this->window_->getSize().y / 12.5) / 30), "Round " + this->get_statistics().get_current_round(), 
-		this->fonts_[0], 55, sf::Color(255, 255, 255), sf::Color::Black, sf::Vector2f(0, 0));
+		this->fonts_[0], this->window_->getSize().y / 22.7, sf::Color(255, 255, 255), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
 	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215),
-		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 19.5), "Enemy", this->fonts_[0], 33, sf::Color(255, 0, 0),
-		sf::Color::Black, sf::Vector2f(0, 0));
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 19.5), "Enemy", this->fonts_[0], this->window_->getSize().y / 37.9, 
+		sf::Color(255, 0, 0), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
 	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215), 
-		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 1.73), "Player", this->fonts_[0], 33, sf::Color(54, 148, 244), 
-		sf::Color::Black, sf::Vector2f(0, 0));
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 1.73), "Player", this->fonts_[0], this->window_->getSize().y / 37.9,
+		sf::Color(54, 148, 244), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
 
-	
 	// Make main menu buttons
-	Button singleplayer_button(sf::Vector2f(window_x / 2, window_y / 1.4f), 27, "Singleplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
-	Button multiplayer_button(sf::Vector2f(window_x / 2, window_y / 1.3f), 27, "Multiplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
-	Button credits_button(sf::Vector2f(window_x / 2, window_y / 1.22f), 27, "Credits", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
+	Button singleplayer_button(sf::Vector2f(window_x / 2, window_y / 1.4f), this->window_->getSize().y / 46.259, "Singleplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
+	Button multiplayer_button(sf::Vector2f(window_x / 2, window_y / 1.3f), this->window_->getSize().y / 46.259, "Multiplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
+	Button credits_button(sf::Vector2f(window_x / 2, window_y / 1.22f), this->window_->getSize().y / 46.259, "Credits", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
 	this->buttons_.push_back(singleplayer_button);
 	this->buttons_.push_back(multiplayer_button);
 	this->buttons_.push_back(credits_button);
 
 	// Make ship menu buttons
 	sf::Vector2f btn_size(this->window_->getSize().x / 10, this->window_->getSize().x / 30);
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Randomize", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, this->window_->getSize().y / 62.45, "Randomize", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Exit to Menu", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, this->window_->getSize().y / 62.45, "Exit to Menu", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Reset Ships", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Reset Ships", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Start Game", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Start Game", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 
 	// Setup singleplayer battle buttons
-	ButtonTexture attack(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Attack", this->fonts_.at(0),
+	ButtonTexture attack(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, this->window_->getSize().y / 62.45, "Attack", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
-	ButtonTexture surrender(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.5f), btn_size, 20, "Surrender", this->fonts_.at(0),
+	ButtonTexture surrender(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.5f), btn_size, this->window_->getSize().y / 62.45, "Surrender", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3);
 	this->tex_buttons_.push_back(attack);
 	this->tex_buttons_.push_back(surrender);
 
 	///// Make multiplayer menu buttons /////
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Host Game", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, this->window_->getSize().y / 62.45, "Host Game", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Join Game", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Join Game", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
-	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, 20, "Ready Up", this->fonts_.at(0),
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Ready Up", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 
 	// Inputbox
@@ -120,7 +119,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	std::vector<sf::Texture*> input_textures;
 	input_textures.push_back(this->texturemanager_.get_texture(21));
 	input_textures.push_back(this->texturemanager_.get_texture(22));
-	this->IP_input_box_ = new InputBox(input_size, input_pos, input_header, 35, input_textures, this->fonts_[0], &this->multiplayer_, this->get_sprite(0), 30);
+	this->IP_input_box_ = new InputBox(input_size, input_pos, input_header, this->window_->getSize().y / 35.7, input_textures, this->fonts_[0], &this->multiplayer_, this->get_sprite(0), 30);
 
 	// Chatbox
 	sf::Vector2f chatbox_size(this->window_->getSize().x / 3.6, this->window_->getSize().y / 5.2), chatbox_pos(this->window_->getSize().x / 155 , this->window_->getSize().y / 1.25);
@@ -133,17 +132,22 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	chatbox_textures.push_back(this->texturemanager_.get_texture(17)); // down arrow
 	chatbox_textures.push_back(this->texturemanager_.get_texture(18)); // down arrow pressed
 	chatbox_textures.push_back(this->texturemanager_.get_texture(19)); // scrollbar
-	this->chatbox_ = new ChatBox(chatbox_size, chatbox_pos, chatbox_header, 22, chatbox_textures, this->fonts_[0], &this->multiplayer_, 25, 7);
+	this->chatbox_ = new ChatBox(chatbox_size, chatbox_pos, chatbox_header, this->window_->getSize().y / 56.77, chatbox_textures, this->fonts_[0], &this->multiplayer_, 25, 7);
 
 	// Setup figurines
 	sf::Vector2f figurine_pnts[5] = { sf::Vector2f(this->window_->getSize().x / 12, this->window_->getSize().y / 1.8), sf::Vector2f(this->window_->getSize().x / 4.4, this->window_->getSize().y / 1.8),
-		sf::Vector2f(this->window_->getSize().x / 14, this->window_->getSize().y / 1.7), sf::Vector2f(this->window_->getSize().x / 5.7, this->window_->getSize().y / 1.7), sf::Vector2f(this->window_->getSize().x / 3.85, this->window_->getSize().y / 1.7) };
-	sf::Vector2f figurine_scale[5] = { sf::Vector2f(1, 1.1f), sf::Vector2f(1, .9f), sf::Vector2f(1.1f, 1.1f), sf::Vector2f(1, 1), sf::Vector2f(1, .95f) };
+		sf::Vector2f(this->window_->getSize().x / 14, this->window_->getSize().y / 1.7), sf::Vector2f(this->window_->getSize().x / 5.7, this->window_->getSize().y / 1.7), sf::Vector2f(this->window_->getSize().x / 3.85,
+			this->window_->getSize().y / 1.7) };
+	sf::Vector2f figurine_new_size[5] = { sf::Vector2f(this->window_->getSize().x / 25, this->window_->getSize().y / 6), sf::Vector2f(this->window_->getSize().x / 47, this->window_->getSize().y / 6.7),
+		sf::Vector2f(this->window_->getSize().x / 58, this->window_->getSize().y / 8.9), sf::Vector2f(this->window_->getSize().x / 42, this->window_->getSize().y / 8.8),
+		sf::Vector2f(this->window_->getSize().x / 72, this->window_->getSize().y / 13.15) };
 	std::string figurine_names[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer" };
 	for (int i = 0; i < 5; i++)
 	{
+		sf::Vector2f original_size(this->texturemanager_.get_texture(5 + i)->getSize().x, this->texturemanager_.get_texture(5 + i)->getSize().y);
+		sf::Vector2f scale(figurine_new_size[i].x / original_size.x, figurine_new_size[i].y / original_size.y);
 		std::vector<sf::Texture*> g = texturemanager_.get_ship_texture(i);
-		Figurine ship_figurine(this->texturemanager_.get_texture(5+i), figurine_pnts[i], figurine_scale[i], false, figurine_names[i], texturemanager_.get_ship_texture(i));
+		Figurine ship_figurine(this->texturemanager_.get_texture(5+i), figurine_pnts[i], scale, false, figurine_names[i], texturemanager_.get_ship_texture(i));
 		this->figurines_.push_back(ship_figurine);
 	}
 	this->figurine_peg_ = new Figurine(this->texturemanager_.get_texture(12), sf::Vector2f(1, 1), "Red Peg");
