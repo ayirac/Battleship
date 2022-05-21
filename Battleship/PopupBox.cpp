@@ -68,8 +68,7 @@ PopupBox::PopupBox(sf::Vector2f size, sf::Vector2f pos, std::string header_text,
 	sf::Vector2f button_size(this->text_containers_.back().width * 0.3, this->text_containers_.back().height * 0.8);
 	this->exit_button_ = new ButtonTexture{ sf::Vector2f(this->text_containers_.back().left + this->text_containers_.back().width / 2 - button_size.x / 2,
 		this->text_containers_.back().top + this->text_containers_.back().height / 2 - button_size.y / 2), button_size, static_cast<unsigned>(button_size.y * 0.7),
-		"Exit", *this->font_, this->textures_[0], this->textures_[1], sf::Color(243, 163, 53), sf::Color(0,255,0), sf::Color(0,0,255), 0, 8};
-
+		"Exit", *this->font_, this->textures_[0], this->textures_[1], sf::Color(243, 163, 53), sf::Color(251,188,38), sf::Color(213,144,19), 0, 8};
 	this->shape_.setFillColor(sf::Color(145, 109, 74));
 	this->shape_.setOutlineColor(sf::Color(115, 86, 59));
 	this->shape_.setOutlineThickness(4);

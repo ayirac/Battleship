@@ -65,18 +65,19 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->image_boxes_.push_back(p_imagebox);
 
 	// Create Round, PLayer, Enemy ImageTextBox
-	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(14), sf::Vector2f(this->window_->getSize().x / 5, this->window_->getSize().y / 15), 
-		sf::Vector2f((window_x - this->window_->getSize().x / 1.1), (window_y - this->window_->getSize().y / 12.5) / 30), "Round " + this->get_statistics().get_current_round(), 
+	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(14), sf::Vector2f(this->window_->getSize().x / 5, this->window_->getSize().y / 15),
+		sf::Vector2f((window_x - this->window_->getSize().x / 5) / 22, (window_y - this->window_->getSize().y / 12.5) / 30), "Round " + this->get_statistics().get_current_round(),
 		this->fonts_[0], this->window_->getSize().y / 22.7, sf::Color(255, 255, 255), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
 	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215),
-		sf::Vector2f((window_x - this->window_->getSize().x / 3), (window_y - this->window_->getSize().y / 2.22)), "Enemy", this->fonts_[0], this->window_->getSize().y / 37.9, 
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 19.5), "Enemy", this->fonts_[0], this->window_->getSize().y / 37.9,
 		sf::Color(255, 0, 0), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215), 
-		sf::Vector2f((window_x - this->window_->getSize().x / 3), (window_y - this->window_->getSize().y / 1.05)), "Player", this->fonts_[0], this->window_->getSize().y / 37.9,
+	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215),
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 1.73), "Player", this->fonts_[0], this->window_->getSize().y / 37.9,
 		sf::Color(54, 148, 244), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
+
 
 	// Make main menu buttons
 	Button singleplayer_button(sf::Vector2f(window_x / 2, window_y / 1.4f), this->window_->getSize().y / 46.259, "Singleplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
