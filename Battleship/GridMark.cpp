@@ -6,7 +6,7 @@ GridMark::GridMark()
 {
 }
 
-GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font& font)
+GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font& font, unsigned cell_size)
 {
 	sf::Text* p_grid;
 	if (orientation == false) // horizontal
@@ -14,11 +14,11 @@ GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font
 		int current_int = 1;
 		for (unsigned i = 0; i < marks; i++)
 		{
-			p_grid = new sf::Text(std::to_string(current_int), font, 30);
+			p_grid = new sf::Text(std::to_string(current_int), font, cell_size * 0.6);
 			p_grid->setFillColor(sf::Color::White);
 			p_grid->setOutlineThickness(2);
 			p_grid->setOutlineColor(sf::Color::Black);
-			p_grid->setPosition(pos.x - 10 + i*50, pos.y - 65);
+			p_grid->setPosition(pos.x - cell_size / 5 + i * cell_size, pos.y - cell_size * 1.3);
 			this->mark_text_.push_back(*p_grid);
 			current_int++;
 		}
@@ -28,11 +28,11 @@ GridMark::GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font
 		char current_char = 65;
 		for (unsigned i = 0; i < marks; i++)
 		{
-			p_grid = new sf::Text(current_char, font, 30);
+			p_grid = new sf::Text(current_char, font, cell_size * 0.6);
 			p_grid->setFillColor(sf::Color::White);
 			p_grid->setOutlineThickness(2);
 			p_grid->setOutlineColor(sf::Color::Black);
-			p_grid->setPosition(pos.x - 65, pos.y - 20 + i*50);
+			p_grid->setPosition(pos.x - cell_size * 1.3, pos.y - cell_size * 0.4  + i * cell_size);
 			this->mark_text_.push_back(*p_grid);
 			current_char++;
 		}

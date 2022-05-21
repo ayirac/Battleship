@@ -36,8 +36,10 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->victory_text_ = victory_text;
 
 	// Setup maps
-	this->player_map_ = Map(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f), this->texturemanager_.get_texture(10), "Player", pegs, this->fonts_.at(0));
-	this->enemy_map_ = Map(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2), this->texturemanager_.get_texture(10), "Enemy", pegs, this->fonts_.at(0));
+	this->player_map_ = Map(10, this->window_->getSize().x / 30, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f), this->texturemanager_.get_texture(10), "Player", 
+		pegs, this->fonts_.at(0));
+	this->enemy_map_ = Map(10, this->window_->getSize().x / 30, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2), this->texturemanager_.get_texture(10), "Enemy",
+		pegs, this->fonts_.at(0));
 
 	// Setup statistics
 	std::vector<sf::Texture*> statistic_textures;
@@ -54,17 +56,26 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	ImageBox* p_imagebox;
 	p_imagebox = new ImageBox(this->texturemanager_.get_texture(0), sf::Vector2f(window_x, window_y));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(250, 50), sf::Vector2f((window_x - 250) / 2, (window_y - 50) / 20));
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(250, 50), sf::Vector2f((window_x - this->window_->getSize().x / 6) / 2, 
+		(window_y - this->window_->getSize().y / 25) / 20));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(400, 100), sf::Vector2f((window_x - 400) / 2, (window_y - 100)));
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(400, 100), sf::Vector2f((window_x - this->window_->getSize().x / 3.75) / 2, 
+		(window_y - this->window_->getSize().y / 12.5)));
 	this->image_boxes_.push_back(p_imagebox);
 
 	// Create Round, PLayer, Enemy ImageTextBox
-	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(14), sf::Vector2f(300, 100), sf::Vector2f((window_x - 300) / 22, (window_y - 100) / 30), "Round " + this->get_statistics().get_current_round(), this->fonts_[0], 55, sf::Color(255, 255, 255), sf::Color::Black, sf::Vector2f(0, 0));
+	std::cout << this->window_->getSize().x/9.68 << " x " << this->window_->getSize().y/19.215 << std::endl;
+	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(14), sf::Vector2f(this->window_->getSize().x / 5, this->window_->getSize().y / 15), 
+		sf::Vector2f((window_x - this->window_->getSize().x/5) / 22, (window_y - this->window_->getSize().y / 12.5) / 30), "Round " + this->get_statistics().get_current_round(), 
+		this->fonts_[0], 55, sf::Color(255, 255, 255), sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(155, 65), sf::Vector2f((window_x - 155) / 1.345, (window_y - 65) / 19.5), "Enemy", this->fonts_[0], 33, sf::Color(255, 0, 0), sf::Color::Black, sf::Vector2f(0, 0));
+	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215),
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 19.5), "Enemy", this->fonts_[0], 33, sf::Color(255, 0, 0),
+		sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(155, 65), sf::Vector2f((window_x - 155) / 1.345, (window_y - 65) / 1.73), "Player", this->fonts_[0], 33, sf::Color(54, 148, 244), sf::Color::Black, sf::Vector2f(0, 0));
+	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215), 
+		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 1.73), "Player", this->fonts_[0], 33, sf::Color(54, 148, 244), 
+		sf::Color::Black, sf::Vector2f(0, 0));
 	this->image_boxes_.push_back(p_imagebox);
 
 	
@@ -77,7 +88,7 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->buttons_.push_back(credits_button);
 
 	// Make ship menu buttons
-	sf::Vector2f btn_size(150, 50);
+	sf::Vector2f btn_size(this->window_->getSize().x / 10, this->window_->getSize().x / 30);
 	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Randomize", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.05f), btn_size, 20, "Exit to Menu", this->fonts_.at(0),
@@ -942,11 +953,6 @@ void Game::randomize_ships(bool players_ships)
 				ship_found = this->get_enemy_map().check_overlap(x, y, rotation, ship_names[i]);
 		} while (ship_found == true);
 
-		// Fix for overflow/proper placement
-		if (rotation == 180)
-			y--;
-		else if (rotation == 90)
-			x--;
 
 		if (players_ships)
 		{

@@ -8,7 +8,7 @@ private:
 public:
 	GridMark();
 	// Creates GridMarks for a map. False for horizontal, true for vertical. 
-	GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font& font);
+	GridMark(bool orientation, sf::Vector2f& pos, unsigned marks, sf::Font& font, unsigned cell_size);
 	void draw(sf::RenderWindow& win);
 
 };

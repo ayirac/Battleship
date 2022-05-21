@@ -38,8 +38,8 @@ Map::Map(unsigned size, unsigned cell_size, sf::Vector2f next_loc, sf::Texture* 
 		this->cells_.push_back(cells);
 	}
 
-	sf::Vector2f cvt_nextloc((next_loc.x - (size * cell_size_ - cell_size_)) / 2, (next_loc.y - (size * cell_size_ - cell_size_)) / 2);
-	this->horizontal_marks_ = GridMark(false, cvt_nextloc, size, font), this->vertical_marks_ = GridMark(true, cvt_nextloc, size, font);
+	sf::Vector2f cvt_nextloc((next_loc.x - (size * cell_size - cell_size)) / 2, (next_loc.y - (size * cell_size - cell_size)) / 2);
+	this->horizontal_marks_ = GridMark(false, cvt_nextloc, size, font, cell_size), this->vertical_marks_ = GridMark(true, cvt_nextloc, size, font, cell_size);
 	this->next_location_ = cvt_nextloc;
 	this->left_point_ = cvt_nextloc;
 }
