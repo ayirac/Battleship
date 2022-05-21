@@ -108,12 +108,12 @@ void Table::add_entry(HMT_stats& player_stats, HMT_stats& enemy_stats)
 		column2_x = column1_x + this->outline_shape_.getGlobalBounds().width * 0.19,
 		column3_x = column2_x + this->outline_shape_.getGlobalBounds().width * 0.19,
 		column4_x = column3_x + this->outline_shape_.getGlobalBounds().width * 0.19;
-	sf::Text hits(std::to_string(player_stats.hits), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
-	sf::Text misses(std::to_string(player_stats.misses), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
-	sf::Text total(std::to_string(player_stats.total), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
+	sf::Text hits(std::to_string(player_stats.hits), this->font_, this->outline_shape_.getGlobalBounds().height / 5.3);
+	sf::Text misses(std::to_string(player_stats.misses), this->font_, this->outline_shape_.getGlobalBounds().height / 5.3);
+	sf::Text total(std::to_string(player_stats.total), this->font_, this->outline_shape_.getGlobalBounds().height / 5.3);
 	std::string hit_rate_no_trailing = std::to_string(player_stats.hit_rate);
 	hit_rate_no_trailing.erase(hit_rate_no_trailing.find("."));
-	sf::Text hit_rate(hit_rate_no_trailing, this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
+	sf::Text hit_rate(hit_rate_no_trailing, this->font_, this->outline_shape_.getGlobalBounds().height / 5.3);
 	hits.setFillColor(sf::Color(245, 163, 53));
 	misses.setFillColor(sf::Color(245, 163, 53));
 	total.setFillColor(sf::Color(245, 163, 53));
