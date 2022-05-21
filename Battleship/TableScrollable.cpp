@@ -186,8 +186,8 @@ void TableScrollable::add_entry(sf::Vector2i hit, bool& successful_attack, bool 
 		column2_x = this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width * 0.6 + this->lines_[1].getGlobalBounds().width / 2;
 
 	// add text
-	sf::Text round(std::to_string(this->current_round_), this->font_, this->outline_shape_.getGlobalBounds().top / 16.7);
-	sf::Text p_hits(player_coord, this->font_, this->outline_shape_.getGlobalBounds().top / 16);
+	sf::Text round(std::to_string(this->current_round_), this->font_, this->outline_shape_.getGlobalBounds().height / 16.7);
+	sf::Text p_hits(player_coord, this->font_, this->outline_shape_.getGlobalBounds().height / 16);
 	round.setOrigin(round.getGlobalBounds().width / 2, round.getGlobalBounds().height / 2);
 	p_hits.setOrigin(p_hits.getGlobalBounds().width / 2, p_hits.getGlobalBounds().height / 2);
 	round.setFillColor(sf::Color(245, 163, 53));

@@ -210,6 +210,9 @@ void Game::release_button()
 	}
 	else if (btn_text == "Reset Ships")
 	{
+		this->downloaded_ships_.ship_placements.clear();
+		this->downloaded_ships_.ship_rotations.clear();
+		this->downloaded_ships_.ship_types.clear();
 		this->get_player_map().remove_ships();
 		this->add_discarded_figurines();
 	}
@@ -278,6 +281,7 @@ void Game::release_button()
 			{
 				// send data to enemy that you're ready, since they're the host
 				std::string r = "$R";
+				//this->multiplayer_.toggle_ready(true);
 				this->multiplayer_.send_data(r);
 			}
 		}
@@ -910,6 +914,9 @@ void Game::randomize_ships(bool players_ships)
 {
 	std::string ship_names[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer" };
 	const int num_ships = 5;
+	this->downloaded_ships_.ship_placements.clear();
+	this->downloaded_ships_.ship_rotations.clear();
+	this->downloaded_ships_.ship_types.clear();
 	for (int i = 0; i < num_ships; i++)
 	{
 		// Get orientation/position
