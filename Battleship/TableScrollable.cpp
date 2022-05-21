@@ -5,7 +5,7 @@
 TableScrollable::TableScrollable() : Table(), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1), held_button_(nullptr) {}
 
 TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font,
-	std::vector<sf::Texture*> textures, int rows) : Table(pos, size, row_spacing, font, textures, rows, true), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1),
+	std::vector<sf::Texture*> textures, int rows) : Table(pos, size, row_spacing, font, textures, rows), current_round_(1), current_row_(1), front_row_(-1), bottom_row_(-1),
 	held_button_(nullptr), player_added_(false), enemy_added_(false)
 {
 	// Setup Header/horizontal lines
@@ -48,7 +48,7 @@ TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned r
 		(this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width - column2_x) / 2 + column2_x - this->lines_[2].getGlobalBounds().width / 2 };
 	for (int i = 0; i < 3; i++)
 	{
-		sf::Text header_text(header_titles[i], font, 22);
+		sf::Text header_text(header_titles[i], font, this->outline_shape_.getGlobalBounds().height / 18.18);
 		header_text.setOrigin(header_text.getGlobalBounds().width / 2, header_text.getGlobalBounds().height / 2);
 		header_text.setFillColor(sf::Color(245, 163, 53));
 		header_text.setOutlineThickness(1);
@@ -59,8 +59,8 @@ TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned r
 	}
 
 	// Setup buttons
-	sf::Vector2f btn_size(50, 50);
-	ButtonTexture button_scroll_up(sf::Vector2f((this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width ),
+	sf::Vector2f btn_size(size.x / 10, size.x / 10);
+	ButtonTexture button_scroll_up(sf::Vector2f((this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width), 
 		this->outline_shape_.getGlobalBounds().top), btn_size, "Up", this->textures_[0], this->textures_[1], 0);
 	ButtonTexture button_scroll_down(sf::Vector2f((this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width ),
 		this->outline_shape_.getGlobalBounds().top + this->outline_shape_.getGlobalBounds().height - btn_size.y), btn_size, "Down", this->textures_[2], this->textures_[3], 0);
@@ -68,7 +68,8 @@ TableScrollable::TableScrollable(sf::Vector2f pos, sf::Vector2f size, unsigned r
 	this->buttons_.push_back(button_scroll_down);
 
 	// setup images
-	ImageBox scroll_bar(this->textures_[4], sf::Vector2f(50, 400), sf::Vector2f(this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width, this->outline_shape_.getGlobalBounds().top));
+	ImageBox scroll_bar(this->textures_[4], sf::Vector2f(size.x/10, size.y), sf::Vector2f(this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width, 
+		this->outline_shape_.getGlobalBounds().top));
 	this->image_boxes_.push_back(scroll_bar);
 }
 
@@ -109,9 +110,9 @@ void TableScrollable::add_entry(sf::Vector2i player_hit, sf::Vector2i enemy_hit,
 		column2_x = this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width * 0.6 + this->lines_[1].getGlobalBounds().width / 2;
 
 	// add text
-	sf::Text round(std::to_string(this->current_round_), this->font_, 24);
-	sf::Text p_hits(player_coord, this->font_, 25);
-	sf::Text e_hits(enemy_coord, this->font_, 25);
+	sf::Text round(std::to_string(this->current_round_), this->font_, this->outline_shape_.getGlobalBounds().height / 16.7);
+	sf::Text p_hits(player_coord, this->font_, this->outline_shape_.getGlobalBounds().height / 16);
+	sf::Text e_hits(enemy_coord, this->font_, this->outline_shape_.getGlobalBounds().height / 16);
 	round.setOrigin(round.getGlobalBounds().width / 2, round.getGlobalBounds().height / 2);
 	p_hits.setOrigin(p_hits.getGlobalBounds().width / 2, p_hits.getGlobalBounds().height / 2);
 	e_hits.setOrigin(e_hits.getGlobalBounds().width / 2, e_hits.getGlobalBounds().height / 2);
@@ -185,8 +186,8 @@ void TableScrollable::add_entry(sf::Vector2i hit, bool& successful_attack, bool 
 		column2_x = this->outline_shape_.getGlobalBounds().left + this->outline_shape_.getGlobalBounds().width * 0.6 + this->lines_[1].getGlobalBounds().width / 2;
 
 	// add text
-	sf::Text round(std::to_string(this->current_round_), this->font_, 24);
-	sf::Text p_hits(player_coord, this->font_, 25);
+	sf::Text round(std::to_string(this->current_round_), this->font_, this->outline_shape_.getGlobalBounds().top / 16.7);
+	sf::Text p_hits(player_coord, this->font_, this->outline_shape_.getGlobalBounds().top / 16);
 	round.setOrigin(round.getGlobalBounds().width / 2, round.getGlobalBounds().height / 2);
 	p_hits.setOrigin(p_hits.getGlobalBounds().width / 2, p_hits.getGlobalBounds().height / 2);
 	round.setFillColor(sf::Color(245, 163, 53));

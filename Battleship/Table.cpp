@@ -41,14 +41,14 @@ Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font
 		header.setPosition(this->outline_shape_.getGlobalBounds().left, this->outline_shape_.getGlobalBounds().top + this->row_spacing_ * i + this->row_spacing_);
 		this->lines_.push_back(header);
 	}
-
+	//(400, 120)
 	// Setup header text
-	sf::Text hits("Hits", font, 22);
-	sf::Text misses("Misses", font, 22);
-	sf::Text total("Total", font, 22);
-	sf::Text hit_rate("Hit%", font, 22);
-	sf::Text player("Player", font, 23);
-	sf::Text enemy("Enemy", font, 23);
+	sf::Text hits("Hits", font, size.y/5.3);
+	sf::Text misses("Misses", font, size.y / 5.3);
+	sf::Text total("Total", font, size.y / 5.3);
+	sf::Text hit_rate("Hit%", font, size.y / 5.3);
+	sf::Text player("Player", font, size.y / 5.3);
+	sf::Text enemy("Enemy", font, size.y / 5.3);
 	this->header_text_.push_back(hits);
 	this->header_text_.push_back(misses);
 	this->header_text_.push_back(total);
@@ -79,7 +79,7 @@ Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font
 }
 
 Table::Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font,
-	std::vector<sf::Texture*> textures, int rows, bool lazy) : row_spacing_(row_spacing), font_(font), textures_(textures), max_rows_(rows)
+	std::vector<sf::Texture*> textures, int rows) : row_spacing_(row_spacing), font_(font), textures_(textures), max_rows_(rows)
 {
 	this->outline_shape_.setSize(size);
 	this->outline_shape_.setPosition(pos);
@@ -108,12 +108,12 @@ void Table::add_entry(HMT_stats& player_stats, HMT_stats& enemy_stats)
 		column2_x = column1_x + this->outline_shape_.getGlobalBounds().width * 0.19,
 		column3_x = column2_x + this->outline_shape_.getGlobalBounds().width * 0.19,
 		column4_x = column3_x + this->outline_shape_.getGlobalBounds().width * 0.19;
-	sf::Text hits(std::to_string(player_stats.hits), this->font_, 22);
-	sf::Text misses(std::to_string(player_stats.misses), this->font_, 22);
-	sf::Text total(std::to_string(player_stats.total), this->font_, 22);
+	sf::Text hits(std::to_string(player_stats.hits), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
+	sf::Text misses(std::to_string(player_stats.misses), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
+	sf::Text total(std::to_string(player_stats.total), this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
 	std::string hit_rate_no_trailing = std::to_string(player_stats.hit_rate);
 	hit_rate_no_trailing.erase(hit_rate_no_trailing.find("."));
-	sf::Text hit_rate(hit_rate_no_trailing, this->font_, 22);
+	sf::Text hit_rate(hit_rate_no_trailing, this->font_, this->outline_shape_.getGlobalBounds().top / 5.3);
 	hits.setFillColor(sf::Color(245, 163, 53));
 	misses.setFillColor(sf::Color(245, 163, 53));
 	total.setFillColor(sf::Color(245, 163, 53));

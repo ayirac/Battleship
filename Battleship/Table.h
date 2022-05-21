@@ -36,7 +36,7 @@ public:
 	// Creates a table with three columns for keeping statistics on the game
 	Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font, int rows);
 	// Creates a table with three columns for keeping statistics on the game for dervied tables
-	Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font, std::vector<sf::Texture*> textures, int rows, bool lazy);
+	Table(sf::Vector2f pos, sf::Vector2f size, unsigned row_spacing, sf::Font& font, std::vector<sf::Texture*> textures, int rows);
 	// draw a table with no buttons accounted for
 	void draw(sf::RenderWindow& win);
 	// add entry to the HMT table

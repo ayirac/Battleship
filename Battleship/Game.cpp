@@ -48,8 +48,8 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	statistic_textures.push_back(this->texturemanager_.get_texture(17)); // down arrow
 	statistic_textures.push_back(this->texturemanager_.get_texture(18)); // down arrow pressed
 	statistic_textures.push_back(this->texturemanager_.get_texture(19)); // scrollbar
-	this->statistics_ = TableScrollable(sf::Vector2f(this->window_->getSize().x / 1.46, this->window_->getSize().y / 7.7), sf::Vector2f(400, 400), 40, this->fonts_[0], statistic_textures, 9);
-	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(400, 120), 120 / 3, this->fonts_[0], 2);
+	this->statistics_ = TableScrollable(sf::Vector2f(this->window_->getSize().x / 1.46, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 3.12), 40, this->fonts_[0], statistic_textures, 9);
+	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 10.41), 120 / 3, this->fonts_[0], 2);
 
 	// Make background/title
 	std::cout << this->window_->getSize().y / 24.8 << " x " << this->window_->getSize().x / 25 << std::endl;
@@ -157,11 +157,11 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	std::vector<sf::Texture*> popup_box_textures;
 	popup_box_textures.push_back(this->texturemanager_.get_texture(23));
 	popup_box_textures.push_back(this->texturemanager_.get_texture(24));
-	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(600, 200), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 2), "Waiting for a connection",
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(this->window_->getSize().x / 2.5, this->window_->getSize().y / 6.245), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 2), "Waiting for a connection",
 		&this->fonts_[0], 0, "", popup_box_textures});
-	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(900, 250), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Placing Ships",
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(this->window_->getSize().x / 1.67, this->window_->getSize().y / 5), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Placing Ships",
 		&this->fonts_[0], 1, "Drag a ship to your map. You can use WASD to rotate it", popup_box_textures });
-	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(900, 300), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Attacking the Enemy",
+	this->popup_boxes_.push_back(new PopupBox{ sf::Vector2f(this->window_->getSize().x / 1.67, this->window_->getSize().y / 4.16), sf::Vector2f(this->window_->getSize().x / 2, this->window_->getSize().y / 3), "Attacking the Enemy",
 		&this->fonts_[0], 2, "Hit Spacebar to prepare to target a grid and click.|Whomever ships float at the end shall be victorious.", popup_box_textures });
 
 }

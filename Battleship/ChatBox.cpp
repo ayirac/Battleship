@@ -15,7 +15,7 @@ ChatBox::ChatBox(sf::Vector2f& size, sf::Vector2f& pos, std::string& instruction
 	this->textfield_text_.setPosition(this->textfield_shape_.getGlobalBounds().left + 10, this->textfield_shape_.getGlobalBounds().top + this->textfield_shape_.getGlobalBounds().height/2.6);
 
 	// Setup scrolling buttons
-	sf::Vector2f btn_size(25, 25);
+	sf::Vector2f btn_size(size.x/15, size.x/15);
 	this->buttons_.push_back(ButtonTexture(sf::Vector2f((this->shape_.getGlobalBounds().left + this->shape_.getGlobalBounds().width),
 		this->shape_.getGlobalBounds().top), btn_size, "Up", this->textures_[2], this->textures_[3], 0));
 	this->buttons_.push_back(ButtonTexture(sf::Vector2f((this->shape_.getGlobalBounds().left + this->shape_.getGlobalBounds().width),
