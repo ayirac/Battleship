@@ -16,10 +16,14 @@ class Animation {
 	sf::Sprite& target;
 
 public:
+	// Creates an Animation given a sprite to target to apply the Animation textures to
 	Animation(sf::Sprite& target);
 	virtual ~Animation();
+	// Adds a frame to the animation
 	void addFrame(Frame&& frame);
+	// Updates the animation given an elapsed time from a Clock
 	void update(double elapsed);
+	// Returns the length of the animation
 	const double getLength() const { return totalLength; }
 };
 

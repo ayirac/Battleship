@@ -1549,5 +1549,5 @@ void Game::send_attack_data(sf::Vector2i& player_attack_pos, bool successful_pla
 
 void Game::update_round()
 {
-	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round());
+	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round()); 
 }
