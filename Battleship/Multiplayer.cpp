@@ -73,6 +73,8 @@ void Multiplayer::thread_look()
 			}
 			else if (this->new_chat_message_->message.find("$S") != std::string::npos)
 			{
+				this->enemy_ready_ = false;
+				this->player_ready_ = false;
 				this->next_stage_ = true;
 			}
 			else if (this->new_chat_message_->message.find("$P") != std::string::npos)
@@ -81,7 +83,6 @@ void Multiplayer::thread_look()
 				{
 					packet >> this->downloaded_ships_.ship_types[i] >> this->downloaded_ships_.ship_placements[i].x >> this->downloaded_ships_.ship_placements[i].y >> this->downloaded_ships_.ship_rotations[i];
 				}
-
 				this->downloaded_map_ = true;
 			}
 			else if (this->new_chat_message_->message.find("$F") != std::string::npos)
@@ -246,19 +247,9 @@ bool Multiplayer::ready(bool player)
 void Multiplayer::toggle_ready(bool player)
 {
 	if (player)
-	{
-		if (this->player_ready_ == true)
-			this->player_ready_ = false;
-		else
-			this->player_ready_ = true;
-	}
+		this->player_ready_ = !this->player_ready_;
 	else
-	{
-		if (this->enemy_ready_ == true)
-			this->enemy_ready_ = false;
-		else
-			this->enemy_ready_ = true;
-	}
+		this->enemy_ready_ = !this->enemy_ready_;
 }
 bool Multiplayer::connected_init()
 {
@@ -275,11 +266,19 @@ bool Multiplayer::next_stage()
 	return this->next_stage_;
 }
 
+void Multiplayer::toggle_next_stage()
+{
+	this->next_stage_ = !this->next_stage_;
+}
+
 bool Multiplayer::downloaded_map()
 {
-	bool temp = this->downloaded_map_;
-	this->downloaded_map_ = false;
-	return temp;
+	return this->downloaded_map_;
+}
+
+void Multiplayer::toggle_downloaded_map()
+{
+	this->downloaded_map_ = !this->downloaded_map_;
 }
 
 bool Multiplayer::get_turn()
@@ -312,6 +311,11 @@ bool& Multiplayer::game_over()
 	return this->game_over_;
 }
 
+void Multiplayer::toggle_game_over()
+{
+	this->game_over_ = !this->game_over_;
+}
+
 Hit& Multiplayer::get_hit()
 {
 	return this->enemy_hit_;
@@ -322,10 +326,12 @@ bool& Multiplayer::enemy_surrender()
 	return this->enemy_surrender_;
 }
 
+void Multiplayer::toggle_enemy_surrender()
+{
+	this->enemy_surrender_ = !this->enemy_surrender_;
+}
+
 void Multiplayer::set_connected(bool b)
 {
 	this->connected_ = b;
 }
-
-
-

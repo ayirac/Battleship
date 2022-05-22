@@ -7,7 +7,7 @@ PopupBox::PopupBox(sf::Vector2f size, sf::Vector2f pos, std::string header_text,
 {
 	// Set the proportions depending on the amount of rows
 	this->shape_.setOrigin(this->shape_.getSize().x / 2, this->shape_.getSize().y / 2);
-	double header_proportion, button_proportion, row_proportion;
+	double header_proportion = 0, button_proportion = 0, row_proportion = 0;
 	if (rows == 0)
 	{
 		header_proportion = 0.6;

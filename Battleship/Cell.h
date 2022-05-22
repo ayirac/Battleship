@@ -44,5 +44,6 @@ public:
 	sf::RectangleShape& get_shape();
 	// Returns true if visible
 	bool& visible();
+	void set_visible(bool b);
 };
 #endif

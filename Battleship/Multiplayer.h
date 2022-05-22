@@ -99,8 +99,11 @@ public:
 	void disable_connected_init();
 	// Indicates that the other player is on the next_stage
 	bool next_stage();
+	//
+	void toggle_next_stage();
 	// Indicates that the other player has sent a map for the player to download
 	bool downloaded_map();
+	void toggle_downloaded_map();
 	// Indicates that it is the player's turn
 	bool get_turn();
 	// Indicates that there is a new attack from the other player
@@ -111,10 +114,12 @@ public:
 	DownloadedShips& download_ships();
 	// Returns true if it is game over
 	bool& game_over();
+	void toggle_game_over();
 	// Returns a reference to the enemy's hit
 	Hit& get_hit();
 	// Returns true if the enemy has surrendered
 	bool& enemy_surrender();
+	void toggle_enemy_surrender();
 	// Sets the status of connection
 	void set_connected(bool b);
 };

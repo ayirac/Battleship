@@ -17,9 +17,9 @@ public:
 	// Sets the texture of the ImageBox
 	void set_texture(sf::Texture* texture);
 	// Draws the Imagebox
-	virtual void draw(sf::RenderWindow& win) const;
+	void draw(sf::RenderWindow& win) const;
 	// Sets the text of the Imagebox
-	virtual void set_text(std::string text);
+	void set_text(std::string text);
 	// Sets the position of the Imagebox
 	void set_position(sf::Vector2f pos);
 };

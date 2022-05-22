@@ -41,7 +41,7 @@ void ChatBox::draw(sf::RenderWindow& win) const
 	// Draw chatbox messages
 	if (this->front_row_ != -1)
 	{
-		int e = 0;
+		unsigned e = 0;
 		for (int i = this->front_row_; i >= this->bottom_row_ && e < this->MAX_ROWS_ + this->bottom_row_; i--)
 		{
 			win.draw(this->name_texts_[i]);
@@ -144,8 +144,8 @@ void ChatBox::add_entry(ChatMessage& chat_message)
 
 void ChatBox::shift_down()
 {
-	int e = this->front_row_ + 1;
-	for (unsigned i = this->front_row_ + 1; e < (this->front_row_ + 1) + this->MAX_ROWS_; i--)
+	unsigned e = this->front_row_ + 1;
+	for (int i = this->front_row_ + 1; e < (this->front_row_ + 1) + this->MAX_ROWS_; i--)
 	{
 		this->name_texts_[i].setPosition(this->name_texts_[i - 1].getPosition());
 		this->message_texts_[i].setPosition(this->message_texts_[i - 1].getPosition());
@@ -157,7 +157,7 @@ void ChatBox::shift_down()
 
 void ChatBox::shift_up()
 {
-	for (unsigned i = this->bottom_row_ - 1; i < this->front_row_; i++)
+	for (int i = this->bottom_row_ - 1; i < this->front_row_; i++)
 	{
 		this->name_texts_[i].setPosition(this->name_texts_[i + 1].getPosition());
 		this->message_texts_[i].setPosition(this->message_texts_[i + 1].getPosition());

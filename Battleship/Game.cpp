@@ -80,12 +80,10 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 
 
 	// Make main menu buttons
-	Button singleplayer_button(sf::Vector2f(window_x / 2, window_y / 1.4f), this->window_->getSize().y / 46.259, "Singleplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
-	Button multiplayer_button(sf::Vector2f(window_x / 2, window_y / 1.3f), this->window_->getSize().y / 46.259, "Multiplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
-	Button credits_button(sf::Vector2f(window_x / 2, window_y / 1.22f), this->window_->getSize().y / 46.259, "Credits", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0);
-	this->buttons_.push_back(singleplayer_button);
-	this->buttons_.push_back(multiplayer_button);
-	this->buttons_.push_back(credits_button);
+	this->buttons_.push_back(Button(sf::Vector2f(window_x / 2, window_y / 1.4f), this->window_->getSize().y / 46.259, "Singleplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0));
+	this->buttons_.push_back(Button(sf::Vector2f(window_x / 2, window_y / 1.3f), this->window_->getSize().y / 46.259, "Multiplayer", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0));
+	this->buttons_.push_back(Button(sf::Vector2f(window_x / 2, window_y / 1.22f), this->window_->getSize().y / 46.259, "Credits", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0));
+	this->buttons_.push_back(Button(sf::Vector2f(window_x / 2, window_y / 1.152f), this->window_->getSize().y / 46.259, "Exit", this->fonts_.at(0), sf::Color(48, 42, 39), sf::Color(38, 35, 33), sf::Color(31, 29, 28), 0));
 
 	// Make ship menu buttons
 	sf::Vector2f btn_size(this->window_->getSize().x / 10, this->window_->getSize().x / 30);
@@ -112,6 +110,8 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.3f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Join Game", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Ready Up", this->fonts_.at(0),
+		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
+	this->tex_buttons_.push_back(ButtonTexture(sf::Vector2f((window_x - btn_size.x) / 1.1f, (window_y - btn_size.y) / 1.15f), btn_size, this->window_->getSize().y / 62.45, "Rematch", this->fonts_.at(0),
 		this->texturemanager_.get_texture(3), this->texturemanager_.get_texture(4), sf::Color(245, 163, 53), sf::Color(251, 188, 38), sf::Color(213, 144, 19), 3));
 
 	// Inputbox
@@ -185,7 +185,7 @@ void Game::release_button()
 	}
 	else if (btn_text == "Exit")
 	{
-
+		this->window_->close();
 	}
 	else if (btn_text == "Randomize")						// Ship menu buttons
 	{
@@ -285,14 +285,25 @@ void Game::release_button()
 			{
 				// send data to enemy that you're ready, since they're the host
 				std::string r = "$R";
-				//this->multiplayer_.toggle_ready(true);
 				this->multiplayer_.send_data(r);
 			}
 		}
-		
+	}
+	else if (btn_text == "Rematch")
+	{
+		if (this->multiplayer_.get_host())
+		{
+			// wait for enemy to ready up/send data
+			this->multiplayer_.toggle_ready(true);
+		}
+		else
+		{
+			// send data to enemy that you're ready, since they're the host
+			std::string r = "$R";
+			this->multiplayer_.send_data(r);
+		}
 	}
 	this->held_button_->reset();
-
 	this->held_button_ = nullptr;
 }
 
@@ -306,10 +317,13 @@ void Game::main_menu()
 	this->buttons_.at(0).draw(*this->window_);
 	this->buttons_.at(1).draw(*this->window_);
 	this->buttons_.at(2).draw(*this->window_);
+	this->buttons_.at(3).draw(*this->window_);
+
 	// Update buttons
 	this->buttons_.at(0).update(world_pos, *this->window_);
 	this->buttons_.at(1).update(world_pos, *this->window_);
 	this->buttons_.at(2).update(world_pos, *this->window_);
+	this->buttons_.at(3).update(world_pos, *this->window_);
 }
 
 
@@ -460,6 +474,7 @@ void Game::singleplayer_game_start()
 	// Check victory status
 	if (this->get_enemy_map().get_ships().empty())
 	{
+		std::cout << "ENEMY SHIPS EMPTY SOMEHOW!!\n";
 		this->set_state(3);
 		this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 		this->victory_text_.setString("Victory");
@@ -526,6 +541,31 @@ void Game::post_game()
 	{
 		this->chatbox_->update(*this->window_, world_pos);
 		this->chatbox_->draw(*this->window_);
+
+		this->tex_buttons_[9].draw(*this->window_);
+		this->tex_buttons_[9].update(world_pos, *this->window_);
+
+		// Check for rematch ready status if host
+		if (this->multiplayer_.get_host())
+		{
+			if (this->multiplayer_.ready(true) && this->multiplayer_.ready(false) && !this->loading_)
+			{
+				this->multiplayer_.send_data("$S");
+				this->multiplayer_.toggle_next_stage();
+				this->loading_ = true;
+			}
+		}
+		if (this->multiplayer_.next_stage())
+		{
+			this->reset_game();
+			this->set_state(5);
+			this->multiplayer_.toggle_next_stage();
+			if (this->multiplayer_.ready(false))
+				this->multiplayer_.toggle_ready(false);
+			if (this->multiplayer_.ready(true))
+				this->multiplayer_.toggle_ready(true);
+			this->loading_ = false;
+		}
 	}
 }
 
@@ -636,6 +676,8 @@ void Game::multiplayer_ship_menu()
 	{
 		if (this->multiplayer_.ready(true) && this->multiplayer_.ready(false) && !this->loading_)
 		{
+			this->multiplayer_.toggle_ready(false);
+			this->multiplayer_.toggle_ready(true);
 			this->multiplayer_.send_data("$S");
 			// send the enemy player
 			sf::Packet packet;
@@ -650,27 +692,37 @@ void Game::multiplayer_ship_menu()
 	else if (this->multiplayer_.next_stage())
 	{
 		// send the enemy host your map
+		this->multiplayer_.toggle_next_stage();
 		sf::Packet packet;
 		packet << "$P";
 		for (int i = 0; i < 5; i++)
 			packet << this->downloaded_ships_.ship_types[i] << this->downloaded_ships_.ship_placements[i].x << this->downloaded_ships_.ship_placements[i].y <<
 			this->downloaded_ships_.ship_rotations[i];
 		this->multiplayer_.send_data(packet);
-		//this->set_state(6); // CONT, ship multiplayer... getting hits, just need to finialize the logic
 	}
 
 	// Check if the enemy map has been downloaded before starting the game
 	if (this->multiplayer_.downloaded_map())
 	{
+		this->multiplayer_.toggle_downloaded_map();
 		this->downloaded_ships_ = this->multiplayer_.download_ships();
 		for (int i = 0; i < 5; i++)
 		{
+			std::cout << "downloading map\n";
 			this->enemy_map_.add_ship(this->downloaded_ships_.ship_placements[i].x, this->downloaded_ships_.ship_placements[i].y, this->downloaded_ships_.ship_rotations[i],
 				this->downloaded_ships_.ship_types[i], this->texturemanager_.get_ship_texture(this->downloaded_ships_.ship_types[i]), false);
 		}
+		if (this->multiplayer_.game_over())
+			this->multiplayer_.toggle_game_over();
+		for (int i = 0; i < 5; i++)
+		{
+			for (int e = 0; e < this->enemy_map_.get_ships()[i]->get_ship_cells().size(); e++)
+				if (this->enemy_map_.get_ships()[i]->get_ship_cells()[e]->visible())
+					this->enemy_map_.get_ships()[i]->get_ship_cells()[e]->set_visible(false);
+		}
+		this->loading_ = false;
 		this->set_state(6);
 	}
-	
 }
 
 void Game::multiplayer_game_start()
@@ -742,33 +794,13 @@ void Game::multiplayer_game_start()
 			else
 				i++;
 		}
-
-		// Victory status check
-		if (this->get_enemy_map().get_ships().empty())
-		{
-			this->set_state(3);
-			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
-			this->victory_text_.setString("Victory");
-			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
-			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
-				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
-			this->victory_text_.setFillColor(sf::Color(255, 157, 25));
-			this->victory_text_.setOutlineColor(sf::Color::Black);
-		}
-		else if (this->get_player_map().get_ships().empty())
-		{
-			this->set_state(3);
-			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
-			this->victory_text_.setString("Defeat");
-			this->victory_text_.setPosition(this->get_player_map().get_left().x + this->get_player_map().get_size() * this->get_player_map().get_cell_size() / 3.9,
-				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
-			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
-			this->victory_text_.setOutlineColor(sf::Color(55, 19, 19));
-		}
-		
 	}
 	if (this->multiplayer_.enemy_surrender())
+	{
 		this->get_enemy_map().destroy_ships();
+		this->multiplayer_.toggle_enemy_surrender();
+	}
+		
 	// Check if it is the player's turn
 	if (this->multiplayer_.get_turn())
 	{
@@ -831,7 +863,8 @@ void Game::multiplayer_game_start()
 	{
 		if (this->get_enemy_map().get_ships().empty())
 		{
-			this->set_state(3);
+			std::cout << "ENEMY SHIPS EMPTY SOMEHOW!!\n" << this->multiplayer_.game_over() << std::endl;
+ 			this->set_state(3);
 			this->HMT_stats_.add_entry(this->player_stats_, this->enemy_stats_);
 			this->victory_text_.setString("Victory");
 			this->victory_text_.setFillColor(sf::Color(244, 163, 53));
@@ -1430,7 +1463,7 @@ void Game::disable_buttons()
 	}
 	else if (this->state_ == 1)
 	{
-		for (int i = 0; i < 3; i++) {									// Disable menu buttons
+		for (int i = 0; i < 4; i++) {									// Disable menu buttons
 			this->buttons_[i].set_state(3);
 		}
 		for (int i = 0; i < 4; i++)										// Enable ship select menu buttons 4
@@ -1438,7 +1471,7 @@ void Game::disable_buttons()
 	}
 	else if (this->state_ == 2)
 	{
-		for (int i = 0; i < 3; i++)										// Disable menu buttons
+		for (int i = 0; i < 4; i++)										// Disable menu buttons
 			this->buttons_[i].set_state(3);
 		for (int i = 0; i < 4; i++)										// Disable ship select menu buttons 4
 			this->tex_buttons_[i].set_state(3);
@@ -1454,7 +1487,7 @@ void Game::disable_buttons()
 	}
 	else if (this->state_ == 4)
 	{
-		for (int i = 0; i < 3; i++) {									// Disable menu buttons
+		for (int i = 0; i < 4; i++) {									// Disable menu buttons
 			this->buttons_[i].set_state(3);
 
 		}
@@ -1471,7 +1504,7 @@ void Game::disable_buttons()
 	}
 	else if (this->state_ == 6)
 	{
-		for (int i = 0; i < 3; i++)										// Disable menu buttons
+		for (int i = 0; i < 4; i++)										// Disable menu buttons
 			this->buttons_[i].set_state(3);
 		for (int i = 0; i < 3; i++)										// Disable ship select menu buttons 4
 			this->tex_buttons_[i].set_state(3);

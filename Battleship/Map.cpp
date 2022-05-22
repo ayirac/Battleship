@@ -212,6 +212,7 @@ bool Map::check_placement(sf::FloatRect& bounds, std::string& type, std::vector<
 
 bool Map::remove_ship(std::string& type)
 {
+	std::cout << "REMOVING SHIP!!!\n";
 	const std::string ship_list[5] = { "Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer"};
 	int angle = 180;
 	for (int i = 0; i < this->ships_.size(); i++)
@@ -232,6 +233,7 @@ bool Map::remove_ship(std::string& type)
 
 void Map::remove_ships()
 {
+	std::cout << "REMOVING SHIPs!!!\n";
 	std::vector<Ship*>::iterator itr;
 	for (itr = this->ships_.begin(); itr != this->ships_.end(); itr++)
 	{

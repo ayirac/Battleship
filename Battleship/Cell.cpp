@@ -100,6 +100,19 @@ bool& Cell::visible()
 	return this->visible_;
 }
 
+void Cell::set_visible(bool b)
+{
+	if (b) 
+	{
+		this->box_.setTexture(this->texture_);
+		this->visible_ = true;
+	}
+	else {
+		this->box_.setTexture(this->empty_texture_);
+		this->visible_ = false;
+	}
+}
+
 sf::Texture* Cell::get_texture()
 {
 	return this->texture_;
