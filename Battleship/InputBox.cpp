@@ -4,7 +4,7 @@
 InputBox::InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size,
 	std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, unsigned max_textfield_entry) : Box(size, pos), textures_(textures), textfield_text_("Enter a message...", font, char_size), edit_mode_(false), cursor_active_(true),
 	text_cursor_(sf::Vector2f(3, char_size)), animate_cursor_thread_(nullptr), held_button_(nullptr), multiplayer_(multiplayer), original_header_(header), MAX_TEXTFIELD_ENTRY(max_textfield_entry),
-	original_textfield_color_(sf::Color(151, 117, 86)), font_(&font), char_size_(char_size)
+	original_textfield_color_(sf::Color(151, 117, 86)), font_(&font), char_size_(char_size), showing_tip_(true), ORIGINAL_TEXTFIELD_ENTRY_("Enter a message...")
 {
 	this->shape_.setFillColor(sf::Color(145, 109, 74));
 	this->shape_.setOutlineColor(sf::Color(115, 86, 59));
@@ -27,10 +27,10 @@ InputBox::InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, uns
 }
 
 InputBox::InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& instructions, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer,
-                   sf::Sprite* loading_sprite, unsigned max_textfield_entry) : Box(size, pos), textures_(textures), header_text_(instructions, font, char_size), textfield_text_("192.168.254.22", 
+                   sf::Sprite* loading_sprite, unsigned max_textfield_entry) : Box(size, pos), textures_(textures), header_text_(instructions, font, char_size), textfield_text_("Enter an IP", 
 					   font, char_size), edit_mode_(false), cursor_active_(true), text_cursor_(sf::Vector2f(4, char_size)), animate_cursor_thread_(nullptr), held_button_(nullptr), multiplayer_(multiplayer),
-	loading_sprite_(loading_sprite), original_header_(instructions), MAX_TEXTFIELD_ENTRY(max_textfield_entry),original_textfield_color_(sf::Color(151, 117, 86)), font_(&font), textfield_entry_("192.168.254.22"),
-	char_size_(char_size)
+	loading_sprite_(loading_sprite), original_header_(instructions), MAX_TEXTFIELD_ENTRY(max_textfield_entry),original_textfield_color_(sf::Color(151, 117, 86)), font_(&font), textfield_entry_("Enter an IP"),
+	char_size_(char_size), showing_tip_(true), ORIGINAL_TEXTFIELD_ENTRY_("Enter an IP")
 {
 	this->shape_.setFillColor(sf::Color(145, 109, 74)); 
 	this->shape_.setOutlineColor(sf::Color(115, 86, 59));
@@ -112,11 +112,27 @@ bool& InputBox::edit_mode()
 
 void InputBox::set_edit_mode(bool b)
 {
+	if (!b && this->textfield_entry_.empty())
+	{
+		this->showing_tip_ = true;
+		this->textfield_entry_ = this->ORIGINAL_TEXTFIELD_ENTRY_;
+		this->textfield_text_.setString(this->textfield_entry_);
+	}
+		
 	this->edit_mode_ = b;
 }
 
 void InputBox::process_keyboard(char key)
 {
+	if (this->showing_tip_)
+	{
+		int t_size = this->textfield_entry_.size();
+		for (int i = 0; i < t_size; i++)
+			this->textfield_entry_.pop_back();
+		this->textfield_text_.setString(this->textfield_entry_);
+		this->showing_tip_ = false;
+	}
+
 	sf::Text temp_text(this->textfield_entry_ + key, *this->font_, this->char_size_);
 	if (temp_text.getGlobalBounds().width * 1.2 < this->textfield_shape_.getGlobalBounds().width)
 	{
@@ -233,4 +249,15 @@ bool InputBox::holding_button()
 std::string& InputBox::get_textfield_entry()
 {
 	return this->textfield_entry_;
+}
+
+void InputBox::set_textfield_entry(sf::String entry)
+{
+	this->textfield_entry_ = entry;
+	this->textfield_text_.setString(this->textfield_entry_);
+}
+
+bool InputBox::get_tip_status()
+{
+	return this->showing_tip_;
 }

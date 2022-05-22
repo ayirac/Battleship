@@ -5,7 +5,8 @@
 #include <SFML/Network/TcpListener.hpp>
 
 Multiplayer::Multiplayer() : port_(55001), hosting_finished_(false), connecting_finished_(false), host_thread_(nullptr), connecting_thread_(nullptr), listening_thread_(nullptr), connected_(false),
-	new_data_(false), host_(false), player_ready_(false), enemy_ready_(false), connected_init_(false), downloaded_map_(false), game_over_(false), victory_(false), new_attack_(false), stopped_host_(false)
+	new_data_(false), host_(false), player_ready_(false), enemy_ready_(false), connected_init_(false), downloaded_map_(false), game_over_(false), victory_(false), new_attack_(false),
+	stopped_host_(false), connecting_(false)
 {
 	for (int i = 0; i < 5; i++ )
 	{
@@ -15,10 +16,10 @@ Multiplayer::Multiplayer() : port_(55001), hosting_finished_(false), connecting_
 	}
 	
 }
-
 void Multiplayer::connect(sf::IpAddress ip)
 {
 	std::cout << "Attempting to connect at " << ip.toString() << std::endl;
+	this->connecting_ = true;
 	this->connecting_thread_ = new std::thread(&Multiplayer::thread_connect, this, ip);
 }
 
@@ -27,7 +28,7 @@ void Multiplayer::thread_connect(sf::IpAddress ip)
 	if (this->connect_socket_.Disconnected)
 	{
 		sf::Socket::Status status = this->connect_socket_.connect(ip, this->port_, sf::milliseconds(5000));
-		if (status == sf::Socket::Done)
+		if (status == sf::Socket::Done || !this->connecting_)
 		{
 			// Send validation packet
 			sf::Packet packet;
@@ -50,10 +51,10 @@ void Multiplayer::thread_connect(sf::IpAddress ip)
 
 void Multiplayer::thread_look()
 {
-	while (true)
+	while (this->connected())
 	{
 		sf::Packet packet;
-		if (this->connect_socket_.receive(packet) != sf::Socket::Done)
+		if (this->connect_socket_.receive(packet) != sf::Socket::Done || !this->connected())
 			std::cout << "Error: Message receive failure\n";
 		else
 		{
@@ -319,5 +320,11 @@ bool& Multiplayer::enemy_surrender()
 {
 	return this->enemy_surrender_;
 }
+
+void Multiplayer::set_connected(bool b)
+{
+	this->connected_ = b;
+}
+
 
 

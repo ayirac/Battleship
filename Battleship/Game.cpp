@@ -212,6 +212,7 @@ void Game::release_button()
 			this->multiplayer_.stop_hosting();
 			this->popup_boxes_[0]->set_state(0);
 		}
+		this->multiplayer_.set_connected(false);
 		this->set_state(0);
 	}
 	else if (btn_text == "Reset Ships")
@@ -746,8 +747,6 @@ void Game::multiplayer_game_start()
 		}
 
 		// Victory status check
-		if (this->multiplayer_.enemy_surrender())
-			this->get_enemy_map().destroy_ships();
 		if (this->get_enemy_map().get_ships().empty())
 		{
 			this->set_state(3);
@@ -771,6 +770,8 @@ void Game::multiplayer_game_start()
 		}
 		
 	}
+	if (this->multiplayer_.enemy_surrender())
+		this->get_enemy_map().destroy_ships();
 	// Check if it is the player's turn
 	if (this->multiplayer_.get_turn())
 	{
@@ -841,7 +842,6 @@ void Game::multiplayer_game_start()
 				this->get_player_map().get_left().y - 2.8 * this->get_player_map().get_cell_size());
 			this->victory_text_.setFillColor(sf::Color(255, 157, 25));
 			this->victory_text_.setOutlineColor(sf::Color::Black);
-
 			if (this->multiplayer_.get_host())
 				this->multiplayer_.send_data("$GL");
 		}
@@ -1482,11 +1482,6 @@ void Game::disable_buttons()
 		for (int i = 5; i < 6; i++)										// Enable SP buttons 2
 			this->tex_buttons_[i].set_state(0);
 	}
-	/*
-	 *for (int i = 0; i < this->buttons_.size(); i++)
-		this->buttons_[i].set_state(3);
-	 */
-	
 }
 
 InputBox* Game::get_inputbox()

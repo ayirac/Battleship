@@ -27,6 +27,8 @@ protected:
 	sf::Color original_textfield_color_;
 	std::string original_header_;
 	const unsigned MAX_TEXTFIELD_ENTRY;
+	bool showing_tip_;
+	const char* ORIGINAL_TEXTFIELD_ENTRY_;
 public:
 	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, unsigned max_textfield_entry);
 	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, sf::Sprite* loading_sprite, unsigned max_textfield_entry);
@@ -47,6 +49,8 @@ public:
 	void process_click(sf::Vector2f& mouse_pos);
 	bool holding_button();
 	std::string& get_textfield_entry();
+	void set_textfield_entry(sf::String string);
+	bool get_tip_status();
 };
 
 #endif

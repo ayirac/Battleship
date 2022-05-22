@@ -35,6 +35,7 @@ private:
 	bool new_attack_;
 	bool stopped_host_;
 	bool enemy_surrender_;
+	bool connecting_;
 	void thread_host();
 	unsigned port_;
 	bool hosting_finished_;	// bools handle setting the threads to null & deleting them in update sequence
@@ -84,5 +85,6 @@ public:
 	bool& game_over();
 	Hit& get_hit();
 	bool& enemy_surrender();
+	void set_connected(bool b);
 };
 #endif

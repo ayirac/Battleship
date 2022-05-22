@@ -218,14 +218,28 @@ int main()
                         battleship.get_inputbox()->set_state(1);
                         battleship.get_multiplayer().connect(sf::IpAddress(battleship.get_inputbox()->get_textfield_entry()));
                     }
+                    else if (event.type == sf::Event::KeyPressed)
+                    {
+                        if (event.key.control && event.key.code == sf::Keyboard::V)
+                        {
+                            for (int i = 0; i < sf::Clipboard::getString().getSize(); i++)
+                                battleship.get_inputbox()->process_keyboard(sf::Clipboard::getString()[i]);
+                        }
+                    }
                     else if (event.type == sf::Event::TextEntered)
                     {
                         if (event.text.unicode == '\b')
                         {
+                            if (battleship.get_inputbox()->get_tip_status())
+                            {
+                                for (int i = 0; i < battleship.get_inputbox()->get_textfield_entry().size(); i++)
+									battleship.get_inputbox()->delete_end_textfield();
+                            }
+                                
                             if (battleship.get_inputbox()->get_textfield_size() > 0)
 								battleship.get_inputbox()->delete_end_textfield();
                         }
-                        else if (event.text.unicode < 128)
+                        else if (event.text.unicode > 31 && event.text.unicode < 128)
                         {
                             std::cout << "ASCII CHAR: " << static_cast<char>(event.text.unicode) << std::endl;
                             battleship.get_inputbox()->process_keyboard(static_cast<char>(event.text.unicode));
