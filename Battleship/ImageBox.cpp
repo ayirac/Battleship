@@ -25,3 +25,8 @@ void ImageBox::draw(sf::RenderWindow& win) const
 }
 
 void ImageBox::set_text(std::string text) {}
+
+void ImageBox::set_position(sf::Vector2f pos)
+{
+	this->shape_.setPosition(pos);
+}

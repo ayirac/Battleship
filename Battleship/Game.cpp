@@ -6,7 +6,7 @@
 // player_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f))  enemy_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2)),
 Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr), held_button_(nullptr), state_(0),
                                        ai_ship_found_(false), ai_reset_first_hit_(true), ai_orientation_reset_(false),
-                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false), loading_(false), turn_(false), start_(true)
+                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false), loading_(false), turn_(false), start_(true), indicator_set_(false)
 { 
 	// Setup pegs
 	std::vector<ImageBox*> pegs;
@@ -52,16 +52,15 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 10.41), this->window_->getSize().y / 10.41 / 3, this->fonts_[0], 2);
 
 	// Make background/title
-	std::cout << this->window_->getSize().y / 24.8 << " x " << this->window_->getSize().x / 25 << std::endl;
 	float window_x = static_cast<float>(this->window_->getSize().x), window_y = static_cast<float>(this->window_->getSize().y);
 	ImageBox* p_imagebox;
 	p_imagebox = new ImageBox(this->texturemanager_.get_texture(0), sf::Vector2f(window_x, window_y));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(this->window_->getSize().x / 6, this->window_->getSize().y / 24.98), sf::Vector2f((window_x - this->window_->getSize().x / 6) / 2,
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(1), sf::Vector2f(this->window_->getSize().x / 3.07, this->window_->getSize().y / 12), sf::Vector2f(((window_x - this->window_->getSize().x / 3.07)/2),
 		(window_y - this->window_->getSize().y / 25) / 20));
 	this->image_boxes_.push_back(p_imagebox);
-	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(this->window_->getSize().y / 3.75, this->window_->getSize().y / 12.49), sf::Vector2f((window_x - this->window_->getSize().x / 3.75) / 2,
-		(window_y - this->window_->getSize().y / 12.5)));
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(2), sf::Vector2f(this->window_->getSize().y / 3.75, this->window_->getSize().y / 12.49), sf::Vector2f((window_x - this->window_->getSize().x / 4.7) / 2,
+		(window_y - this->window_->getSize().y / 12.5))); // using 2 y's here instead of x & y
 	this->image_boxes_.push_back(p_imagebox);
 
 	// Create Round, PLayer, Enemy ImageTextBox
@@ -76,6 +75,9 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	p_imagebox = new ImageTextBox(this->texturemanager_.get_texture(20), sf::Vector2f(this->window_->getSize().x / 9.68, this->window_->getSize().y / 19.215),
 		sf::Vector2f((window_x - this->window_->getSize().x / 9.678) / 1.345, (window_y - this->window_->getSize().y / 19.215) / 1.73), "Player", this->fonts_[0], this->window_->getSize().y / 37.9,
 		sf::Color(54, 148, 244), sf::Color::Black, sf::Vector2f(0, 0));
+	this->image_boxes_.push_back(p_imagebox);
+	p_imagebox = new ImageBox(this->texturemanager_.get_texture(25), sf::Vector2f(this->window_->getSize().x / 15.5, this->window_->getSize().y / 20), sf::Vector2f((window_x),
+		(window_y)));
 	this->image_boxes_.push_back(p_imagebox);
 
 
@@ -180,6 +182,10 @@ void Game::release_button()
 		this->set_state(4);
 	}
 	else if (btn_text == "Credits")
+	{
+		
+	}
+	else if (btn_text == "Exit")
 	{
 
 	}
@@ -306,7 +312,6 @@ void Game::main_menu()
 	this->buttons_.at(0).update(world_pos, *this->window_);
 	this->buttons_.at(1).update(world_pos, *this->window_);
 	this->buttons_.at(2).update(world_pos, *this->window_);
-
 }
 
 
@@ -379,6 +384,9 @@ void Game::singleplayer_game_start()
 	this->tex_buttons_.at(4).update(world_pos, *this->window_);
 	this->tex_buttons_.at(5).draw(*this->window_);
 	this->tex_buttons_.at(5).update(world_pos, *this->window_);
+
+	// Draw turn
+	this->image_boxes_[6]->draw(*this->window_);
 
 	// Draw grids
 	this->get_player_map().draw_grid_marks(*this->window_);
@@ -613,7 +621,6 @@ void Game::multiplayer_ship_menu()
 			this->held_figurine_->drag(world_pos);
 	}
 
-
 	// Draw popupbox if it is triggered
 	if (this->popup_seen_ == false)
 	{
@@ -660,8 +667,6 @@ void Game::multiplayer_ship_menu()
 		this->downloaded_ships_ = this->multiplayer_.download_ships();
 		for (int i = 0; i < 5; i++)
 		{
-			std::cout << "Adding " << this->downloaded_ships_.ship_types[i] << " AT " << this->downloaded_ships_.ship_placements[i].x << ", " << this->downloaded_ships_.ship_placements[i].y
-				<< " rot: " << this->downloaded_ships_.ship_rotations[i] << std::endl;
 			this->enemy_map_.add_ship(this->downloaded_ships_.ship_placements[i].x, this->downloaded_ships_.ship_placements[i].y, this->downloaded_ships_.ship_rotations[i],
 				this->downloaded_ships_.ship_types[i], this->texturemanager_.get_ship_texture(this->downloaded_ships_.ship_types[i]), false);
 		}
@@ -684,12 +689,15 @@ void Game::multiplayer_game_start()
 			{
 				this->turn_ = true;
 				this->tex_buttons_[4].set_state(0); // enable attack button
-				std::cout << "Your turn\n";
+				this->image_boxes_[6]->set_position(sf::Vector2f(this->window_->getSize().x / 1.29, this->window_->getSize().y / 1.75));
+				this->indicator_set_ = true;
 			}
 			else
 			{
 				this->tex_buttons_[4].set_state(3); // disable attack button
 				this->multiplayer_.send_data("$F");
+				this->image_boxes_[6]->set_position(sf::Vector2f(this->window_->getSize().x / 1.29, this->window_->getSize().y / 19));
+				this->indicator_set_ = true;
 			}
 		}
 		// Check ship status
@@ -771,7 +779,24 @@ void Game::multiplayer_game_start()
 		this->update_round();
 		this->turn_ = true;
 		this->tex_buttons_[4].set_state(0); // enable attack button1
-		std::cout << "Your turn\n";
+		this->indicator_set_ = false;
+	}
+	// Set turn indicator
+	if (this->turn_)
+	{
+		if (!this->indicator_set_)
+		{
+			this->image_boxes_[6]->set_position(sf::Vector2f(this->window_->getSize().x / 1.29, this->window_->getSize().y / 1.835));
+			this->indicator_set_ = true;
+		}
+	}
+	else
+	{
+		if (!this->indicator_set_)
+		{
+			this->image_boxes_[6]->set_position(sf::Vector2f(this->window_->getSize().x / 1.29, this->window_->getSize().y / 19));
+			this->indicator_set_ = true;
+		}
 	}
 
 	// Check ship status
@@ -880,6 +905,9 @@ void Game::multiplayer_game_start()
 	// Draw chatbox
 	this->chatbox_->update(*this->window_, world_pos);
 	this->chatbox_->draw(*this->window_);
+
+	// Draw turn indicator
+	this->image_boxes_[6]->draw(*this->window_);
 
 	// Check if player is readying to attack
 	if (this->holding_figurine())
@@ -1126,7 +1154,6 @@ bool Game::process_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos, bool& 
 {
  	std::string target_hit;
 	target_hit = this->get_enemy_map().check_hit(mouse_pos, attack_pos);
-	std::cout << "Player has hit " << target_hit << std::endl;
 	if (target_hit == "Outside" || target_hit == "Filled")
 		return false;
 	if (target_hit != "Empty")
@@ -1508,6 +1535,7 @@ bool Game::get_turn()
 
 void Game::set_turn(bool b)
 {
+	this->indicator_set_ = false;
 	this->turn_ = b;
 }
 

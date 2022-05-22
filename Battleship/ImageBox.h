@@ -15,6 +15,7 @@ public:
 	void set_texture(sf::Texture* texture);
 	virtual void draw(sf::RenderWindow& win) const;
 	virtual void set_text(std::string text);
+	void set_position(sf::Vector2f pos);
 };
 
 #endif

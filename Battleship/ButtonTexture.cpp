@@ -1,6 +1,6 @@
 #include "ButtonTexture.h"
 
-ButtonTexture::ButtonTexture()
+ButtonTexture::ButtonTexture() : y_correction_(0)
 {
 }
 

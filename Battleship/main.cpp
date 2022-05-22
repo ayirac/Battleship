@@ -9,15 +9,14 @@ int main()
 {
     srand(time(NULL));
     sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width * 0.586, sf::VideoMode::getDesktopMode().height * 0.868), "Battleship");
+    window.setPosition(sf::Vector2i((VideoMode::getDesktopMode().width - window.getSize().x )/ 2, (VideoMode::getDesktopMode().height - window.getSize().y) /2));
     window.setVerticalSyncEnabled(true);
     Game battleship(&window);
-
     sf::Clock clock;
     double elapsed = 0;
 
     while (window.isOpen())
     {
-        
         // debug check for host connection
         if (!battleship.get_multiplayer().get_listener().Disconnected)
 	        std::cout << "Hosting!\n";
@@ -46,6 +45,7 @@ int main()
             battleship.multiplayer_game_start();
 
 
+        // Event/keybind handling for each stages
         sf::Event event;
     	while (window.pollEvent(event))
     	{

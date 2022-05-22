@@ -63,6 +63,7 @@ private:
 	bool loading_;
 	bool turn_;
 	bool start_;
+	bool indicator_set_;
 
 public:
 	// Setup of objects/textures for the Game in a given RenderWindow
