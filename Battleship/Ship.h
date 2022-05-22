@@ -32,6 +32,7 @@ public:
 	std::vector<Cell*>& get_ship_cells();
 	// Removes 1 from the ships health points
 	void remove_hp();
+	// Removes all HP from the ship
 	void destroy();
 };
 

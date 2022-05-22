@@ -3,10 +3,8 @@
 
 #include "Map.h"
 
-// player_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) * 1.5f))  enemy_map_(10, 50, sf::Vector2f(static_cast<float>(window->getSize().x), static_cast<float>(window->getSize().y) / 2)),
-Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr), held_button_(nullptr), state_(0),
-                                       ai_ship_found_(false), ai_reset_first_hit_(true), ai_orientation_reset_(false),
-                                       ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false), loading_(false), turn_(false), start_(true), indicator_set_(false)
+Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr), held_button_(nullptr), state_(0), ai_ship_found_(false), ai_reset_first_hit_(true), ai_orientation_reset_(false),
+	ai_ship_found_orientation(0), side_checked_{false, false, false, false}, popup_seen_(false), loading_(false), turn_(false), start_(true), indicator_set_(false)
 { 
 	// Setup pegs
 	std::vector<ImageBox*> pegs;
@@ -225,7 +223,6 @@ void Game::release_button()
 	}
 	else if (btn_text == "Start Game")
 	{
-		// start game & randomize enemy ships if all players ships are added
 		if (this->figurines_.empty())
 		{
 			this->popup_seen_ = false;
@@ -233,7 +230,7 @@ void Game::release_button()
 			this->randomize_ships(false);
 		}
 		else {
-			// add error msg, maybe popup box with custom class
+			// Add error msg
 		}
 	}
 	else if (btn_text == "Attack")							// Singleplayer battle buttons

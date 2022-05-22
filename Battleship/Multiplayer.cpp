@@ -105,6 +105,7 @@ void Multiplayer::thread_look()
 			else if (this->new_chat_message_->message.find("$Q") != std::string::npos)
 			{
 				this->enemy_surrender_ = true;
+				this->game_over_ = true;
 			}
 
 			std::cout << "Received " << packet.getDataSize() << " bytes\t" << "Message: " << this->new_chat_message_->message << std::endl;
