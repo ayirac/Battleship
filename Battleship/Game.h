@@ -91,7 +91,7 @@ public:
 	Map& get_enemy_map();
 	// Returns the current state_
 	const unsigned& get_state() const;
-	//
+	// Sets the state of the Game, states are explained above.
 	void set_state(unsigned state);
 	// Remove a figurine given a string&
 	void remove_figurine(std::string& type);
@@ -112,9 +112,9 @@ public:
 	bool holding_figurine() const;
 	// Returns true if a button is being pressed
 	bool holding_button() const;
-	//
+	// Adds discarded figurines back into the pool
 	void add_discarded_figurines();
-	//
+	// Readies an attack by making the Red Peg the held Figurine
 	void ready_attack();
 	// Process the hit. Return false if outside the map, else true.
 	bool process_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos, bool& hit);
@@ -136,23 +136,26 @@ public:
 	InputBox* get_inputbox();
 	// Returns the pointer to the chatbox
 	ChatBox* get_chatbox();
-	//
+	// Returns a reference to the multiplayer object
 	Multiplayer& get_multiplayer();
-	//
+	// Returns a reference to an animation given its id
 	Animation& get_animation(unsigned id);
-	//
+	// Returns a pointer to a sprite given its id
 	sf::Sprite* get_sprite(unsigned id);
+	// Sets the chatbox state
 	void set_chatbox_state(unsigned state);
+	// PopupBox checks the given mouse coordinates to see if the Button is clicked on
 	void process_popup_box(sf::Vector2f& mouse_pos);
+	// Checks if any of the PopupBoxes is being exited
 	void check_popup_boxes_exit();
+	// Returns true if it is the players turn, MULTIPLAYER ONLY
 	bool get_turn();
+	// Sets the players turn, MULTIPLAYER ONLY
 	void set_turn(bool b);
+	// Send attack data to the enemy player after an attack, parameters are position & bool for success.
 	void send_attack_data(sf::Vector2i& player_attack_pos, bool successful_player_attack);
+	// Sets the Round ImageBox text to the current round
 	void update_round();
 };
 
-inline void Game::update_round()
-{
-	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round());
-}
 #endif

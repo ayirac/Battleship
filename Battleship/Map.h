@@ -38,26 +38,29 @@ public:
 	void remove_ships();
 	// Return a reference to the ships_ vector
 	std::vector<Ship*>& get_ships();
-	// checks hit
+	// Checks the Map's ships for a hit given mouse coordinates
 	std::string check_hit(sf::Vector2f& mouse_pos, sf::Vector2i& attack_pos);
-	// checks hit
+	// Checks the Map's ships for a hit given cell coordinates
 	std::string check_hit(sf::Vector2i& pos);
-	//
+	// Debug operator overload for seeing placement of ships
 	friend std::ostream& operator<<(std::ostream& output, Map& map);
-	//
+	// Returns the player's name who owns the Map
 	std::string& get_name();
-	//
+	// Returns the size of the cells vector (or the size of Map)
 	unsigned get_size();
-	//
+	// Returns a reference to a vector of the Map cells
 	std::vector<std::vector<Cell>>& get_cells();
-	//
+	// Returns the coordinates to the first open cell of the Map
 	sf::Vector2i& get_first_open_cell();
-	//
+	// Draws the grid marks given a RenderWindow
 	void draw_grid_marks(sf::RenderWindow& win);
-	//
+	// Resets the Map to its original state
 	void reset_map();
+	// Returns the left point of the Map
 	sf::Vector2f& get_left();
+	// Returns the size of a cell belonging to a Map
 	unsigned get_cell_size();
+	// Destroys all ships on the Map
 	void destroy_ships();
 };
 

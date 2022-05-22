@@ -30,6 +30,7 @@ public:
 	// Resets the button state to its original state
 	void reset();
 	sf::RectangleShape& get_shape();
+	// Get the y-axis difference between two buttons
 	float difference(ButtonTexture& button) const;
 };
 #endif

@@ -50,6 +50,7 @@ public:
 	float get_abs_angle() const;
 	// Resets the position of the Figurine to its original state
 	void reset_position();
+	// Returns a FloatRect representing the global bounds of the Figurine
 	sf::FloatRect get_global_bounds();
 };
 #endif

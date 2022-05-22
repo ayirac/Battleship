@@ -1546,3 +1546,8 @@ void Game::send_attack_data(sf::Vector2i& player_attack_pos, bool successful_pla
 	packet << "$T" << player_attack_pos.x << player_attack_pos.y << successful_player_attack;
 	this->multiplayer_.send_data(packet);
 }
+
+void Game::update_round()
+{
+	this->image_boxes_.at(3)->set_text("Round " + this->get_statistics().get_current_round());
+}

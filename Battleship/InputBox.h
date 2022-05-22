@@ -30,26 +30,40 @@ protected:
 	bool showing_tip_;
 	const char* ORIGINAL_TEXTFIELD_ENTRY_;
 public:
+	// Constructor creates an InputBox setup for the ChatBox derived class
 	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, unsigned max_textfield_entry);
+	// Constructor creates an InputBox for entering Input given the following parameters
 	InputBox(sf::Vector2f size, sf::Vector2f pos, std::string& header, unsigned char_size, std::vector<sf::Texture*> textures, sf::Font& font, Multiplayer* multiplayer, sf::Sprite* loading_sprite, unsigned max_textfield_entry);
 	~InputBox();
+	// Draws the InputBox to a RenderWindow
 	void draw(sf::RenderWindow& win) const;
 	// Updates the textfield animations
 	virtual void update(sf::RenderWindow& win, sf::Vector2f& mouse_pos);
 	// Returns true if the text field is being edited
 	bool& edit_mode();
+	// Sets the edit_mode according to the parameter
 	void set_edit_mode(bool b);
+	// Processes a char from the keyboard & performs calculations before considering adding it to the textfield entry
 	void process_keyboard(char key);
 	// Checks if the textbox contains the mouse_pos
 	bool contains(const sf::Vector2f& mouse_pos);
+	// Called by a thread and it animates the text cursor for an InputBox. (Glowing/Blinking)
 	void animate_text_cursor();
+	// Deletes the end of the textfield
 	void delete_end_textfield();
+	// Gets the textfield size
 	unsigned get_textfield_size();
+	// Releases the held button
 	virtual void release_button();
+	// Processes a click against the InputBox
 	void process_click(sf::Vector2f& mouse_pos);
+	// Returns true if holding a button
 	bool holding_button();
+	// Returns a reference to the textfield entry
 	std::string& get_textfield_entry();
+	// Sets the textfield entry to a given string
 	void set_textfield_entry(sf::String string);
+	// Get the current textfield tip status
 	bool get_tip_status();
 };
 

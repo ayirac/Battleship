@@ -20,6 +20,7 @@ public:
 	void set_texture(std::string type);
 	// Sets the texture of the cell and its type
 	void set_texture(sf::Texture* t, std::string type, bool change);
+	// Remove the cell's texture
 	void remove_texture();
 	// Get the pointer to the texture of the cell
 	sf::Texture* get_texture();
@@ -37,10 +38,11 @@ public:
 	void add_peg(ImageBox* peg); // false for white, true for read
 	// Removes a peg from a cell
 	void remove_peg();
-	//
+	// Returns true if a Peg is present on the cell
 	bool has_peg();
-	//
+	// Returns a reference to the RectangleShape of the Cell
 	sf::RectangleShape& get_shape();
+	// Returns true if visible
 	bool& visible();
 };
 #endif
