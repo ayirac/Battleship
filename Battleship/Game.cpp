@@ -48,8 +48,8 @@ Game::Game(sf::RenderWindow* window) : window_(window), held_figurine_(nullptr),
 	statistic_textures.push_back(this->texturemanager_.get_texture(17)); // down arrow
 	statistic_textures.push_back(this->texturemanager_.get_texture(18)); // down arrow pressed
 	statistic_textures.push_back(this->texturemanager_.get_texture(19)); // scrollbar
-	this->statistics_ = TableScrollable(sf::Vector2f(this->window_->getSize().x / 1.46, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 3.12), 40, this->fonts_[0], statistic_textures, 9);
-	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 10.41), 120 / 3, this->fonts_[0], 2);
+	this->statistics_ = TableScrollable(sf::Vector2f(this->window_->getSize().x / 1.46, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 3.12), this->window_->getSize().y/31.225, this->fonts_[0], statistic_textures, 9);
+	this->HMT_stats_ = Table(sf::Vector2f(this->window_->getSize().x / 38, this->window_->getSize().y / 7.7), sf::Vector2f(this->window_->getSize().x / 3.75, this->window_->getSize().y / 10.41), this->window_->getSize().y / 10.41 / 3, this->fonts_[0], 2);
 
 	// Make background/title
 	std::cout << this->window_->getSize().y / 24.8 << " x " << this->window_->getSize().x / 25 << std::endl;
