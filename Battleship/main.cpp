@@ -56,6 +56,10 @@ int main()
             if (event.type == sf::Event::KeyPressed)
                 if (event.key.code == sf::Keyboard::End)
                     window.close();
+
+            // General events
+            if (event.type == sf::Event::Closed)
+                window.close();
                     
             // Main menu keybinds
             if (battleship.get_state() == 0)
