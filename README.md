@@ -29,6 +29,9 @@ Two players can play against eachother by hosting & connecting via IP address, f
   <img src="https://github.com/ayirac/Battleship/blob/master/multi.png" width="80% height="80%">
 </p>
 
+## Challenges Faced
+The first major challenge I faced was laying out the path to follow, which was difficult because there's alot of features/paths you can take. Another challenge that wasn't too difficult but it was tedious is fixing bugs related to ship placement to prevent crashes or misplacements required a lot of trial and error. The multiplayer aspect was an additional feature added on after the main game was done and setting up the commuication network for 2 clients to connect took some time to understand. Thankfully, SFML has good documentaiton and I was able to finish up the multiplayer module & even add a chatbox for the two players to talk with eachother.
+
 ## Motivation
 I started working on this project after learning about OOP in depth in class because I wanted to get a feel for the strengths of objects. I may of gotten a little carried
 away with the amount of classes my program has, as I made a class for every specific UI element. What I've realizied is that encapsulating each element in their own class
