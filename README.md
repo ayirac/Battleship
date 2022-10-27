@@ -14,13 +14,13 @@ The classic game of Battleship written in C++ utilizing the SFML library with si
 ## Game Setup :wrench:
 Players can move their ships exactly where they want by dragging and dropping and using 'WASD' to rotate orientations. 
 <p align="center">
-  <img src="https://github.com/ayirac/Battleship/blob/master/setup.gif">
+  <img src="https://github.com/ayirac/Battleship/blob/master/setup.gif" width="80%">
 </p>
 
 ## Playing a Game :ship:
 Two players face off in a race to sink eachothers ships before their own ships.
 <p align="center">
-  <img src="https://github.com/ayirac/Battleship/blob/master/game.gif" width="80%>
+  <img src="https://github.com/ayirac/Battleship/blob/master/game.gif" width="80%">
 </p>
 
 ## Multiplayer :two:
